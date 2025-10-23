@@ -15,5 +15,7 @@
         address
         FROM T_CinemaFranchise
         ORDER by branch_num
+
+
     </select>
 </mapper>
