@@ -1,4 +1,5 @@
-package com.ohgiraffers.com;
+package com.novacinema;
+
 
 import org.apache.ibatis.annotations.Mapper;
 import org.mybatis.spring.annotation.MapperScan;
@@ -7,8 +8,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
-@ComponentScan(basePackages = "com.ohgiraffers.com")
-@MapperScan(basePackages = "com.ohgiraffers.com", annotationClass = Mapper.class)
+@ComponentScan(basePackages = "com.novacinema")
+@MapperScan(basePackages = "com.novacinema", annotationClass = Mapper.class)
 public class Application {
 
     public static void main(String[] args) {

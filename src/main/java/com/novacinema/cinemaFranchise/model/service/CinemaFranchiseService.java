@@ -1,6 +1,8 @@
-package com.ohgiraffers.com.cinemaFranchise;
+package com.novacinema.cinemaFranchise.model.service;
 
 
+import com.novacinema.cinemaFranchise.model.dto.CinemaFranchiseDTO;
+import com.novacinema.cinemaFranchise.model.dao.CinemaFranchiseMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

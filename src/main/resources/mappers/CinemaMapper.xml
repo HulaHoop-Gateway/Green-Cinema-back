@@ -2,8 +2,8 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ohgiraffers.com.cinemaFranchise.CinemaFranchiseMapper">
-    <resultMap id="cinemaFranchiseResultMap" type="com.ohgiraffers.com.cinemaFranchise.CinemaFranchiseDTO">
+<mapper namespace="com.novacinema.cinemaFranchise.model.dao.CinemaFranchiseMapper">
+    <resultMap id="cinemaFranchiseResultMap" type="com.novacinema.cinemaFranchise.model.dto.CinemaFranchiseDTO">
         <id property="branchNum" column="branch_num"/>
         <result property="branchName" column="branch_name"/>
         <result property="address" column="address"/>

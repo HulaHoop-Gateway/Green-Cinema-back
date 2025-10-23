@@ -1,4 +1,4 @@
-package com.ohgiraffers.com.cinemaFranchise;
+package com.novacinema.cinemaFranchise.model.dto;
 
 public class CinemaFranchiseDTO {
     private int branchNum;

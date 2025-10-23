@@ -1,4 +1,4 @@
-package com.ohgiraffers.com;
+package com.novacinema;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
