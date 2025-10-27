@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.novacinema.cinemaFranchise.model.dao.CinemaFranchiseMapper">
+<mapper namespace="com.novacinema.cinemaFranchise.model.dao.ReservationMapper">
     <resultMap id="cinemaFranchiseResultMap" type="com.novacinema.cinemaFranchise.model.dto.CinemaFranchiseDTO">
         <id property="branchNum" column="branch_num"/>
         <result property="branchName" column="branch_name"/>
@@ -15,7 +15,30 @@
         address
         FROM T_CinemaFranchise
         ORDER by branch_num
-
-
     </select>
+    <insert id="addCinemaFranchise" parameterType="com.novacinema.cinemaFranchise.model.dto.CinemaFranchiseDTO">
+        INSERT INTO T_CinemaFranchise (
+        branch_num,
+        branch_name,
+        address
+        ) VALUES (
+        #{branchNum},
+        #{branchName},
+        #{address}
+        )
+    </insert>
+    <delete id="deleteCinemaFranchiseByBranchNum" parameterType="int">
+        DELETE FROM T_CinemaFranchise
+        WHERE branch_num = #{branchNum}
+    </delete>
+    <update id="updateCinemaFranchise" parameterType="com.novacinema.cinemaFranchise.model.dto.CinemaFranchiseDTO">
+        UPDATE T_CinemaFranchise
+        SET
+        branch_name = #{branchName},
+        address = #{address}
+        WHERE
+        branch_num = #{branchNum}
+    </update>
+
+
 </mapper>

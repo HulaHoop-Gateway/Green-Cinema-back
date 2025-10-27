@@ -15,4 +15,15 @@ public class CinemaFranchiseService {
     public List<CinemaFranchiseDTO> getAllCinemaFranchises(){
         return cinemaFranchiseMapper.findAllCinemaFranchises();
     }
+
+    public void addCinemaFranchise(CinemaFranchiseDTO cinemaFranchiseDTO) {
+        cinemaFranchiseMapper.addCinemaFranchise(cinemaFranchiseDTO);
+    }
+
+    public void deleteByBranchNum(int branchNum) {
+        cinemaFranchiseMapper.deleteCinemaFranchiseByBranchNum(branchNum);}
+
+    public void updateCinemaFranchise(CinemaFranchiseDTO cinemaFranchiseDTO) {
+        cinemaFranchiseMapper.updateCinemaFranchise(cinemaFranchiseDTO);
+    }
 }
