@@ -1,8 +1,13 @@
 package com.novacinema.cinemaFranchise.model.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class CinemaFranchiseDTO {
+    @JsonProperty
     private int branchNum;
+    @JsonProperty
     private String branchName;
+    @JsonProperty
     private String address;
     public CinemaFranchiseDTO(){}
 

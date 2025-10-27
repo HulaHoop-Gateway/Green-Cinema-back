@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.novacinema.cinemaFranchise.model.dao.ReservationMapper">
+    <resultMap id="reservationResultMap" type="com.novacinema.cinemaFranchise.model.dto.ReservationDTO">
+        <id property="reservationNum" column="reservation_num"/>
+        <result property="userCode" column="user_code"/>
+        <result property="movieNum" column="movie_num"/>
+        <result property="scheduleNum" column="schedule_num"/>
+        <result property="seatCode" column="seat_code"/>
+        <result property="paymentTime" column="payment_time"/>
+        <result property="status" column="status"/>
+    </resultMap>
+    <!-- 예매 전체 조회 -->
+    <select id="selectAllReservations" resultMap="reservationResultMap">
+        SELECT * FROM T_ReservationInfo
+    </select>
+
+
+</mapper>
