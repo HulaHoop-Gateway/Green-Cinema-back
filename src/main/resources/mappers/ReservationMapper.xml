@@ -35,5 +35,10 @@
         FROM T_ReservationInfo
         WHERE reservation_num = #{reservationNum}
     </select>
+    <!-- 예매 전체 조회 -->
+    <select id="selectAllReservations" resultMap="reservationResultMap">
+        SELECT * FROM T_ReservationInfo
+    </select>
+
 
 </mapper>
