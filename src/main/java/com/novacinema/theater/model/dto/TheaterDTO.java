@@ -1,12 +1,14 @@
-package com.novacinema.cinemaFranchise.model.dto;
+package com.novacinema.theater.model.dto;
 
-public class TheatherDTO {
-    private int screeningNum;      // 상영관 고유 번호
-    private int screeningNumber;   // 상영관 번호
-    private int branchNum;         // 지점 번호
-    public TheatherDTO(){};
+public class TheaterDTO {
+    private int screeningNum;       // 상영관 고유 번호
+    private int screeningNumber;    // 상영관 번호
+    private int branchNum;          // 지점 번호 (외래키)
 
-    public TheatherDTO(int screeningNum, int screeningNumber, int branchNum) {
+    // 기본 생성자
+    public TheaterDTO() {}
+
+    public TheaterDTO(int screeningNum, int screeningNumber, int branchNum) {
         this.screeningNum = screeningNum;
         this.screeningNumber = screeningNumber;
         this.branchNum = branchNum;
@@ -38,7 +40,7 @@ public class TheatherDTO {
 
     @Override
     public String toString() {
-        return "TheatherDTO{" +
+        return "TheaterDTO{" +
                 "screeningNum=" + screeningNum +
                 ", screeningNumber=" + screeningNumber +
                 ", branchNum=" + branchNum +

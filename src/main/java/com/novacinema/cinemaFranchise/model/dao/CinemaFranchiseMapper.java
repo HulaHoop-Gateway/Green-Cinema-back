@@ -8,8 +8,6 @@ import java.util.List;
 public interface CinemaFranchiseMapper {
     List<CinemaFranchiseDTO> findAllCinemaFranchises();
     void addCinemaFranchise(CinemaFranchiseDTO cinemaFranchiseDTO);
-
     void deleteCinemaFranchiseByBranchNum(int branchNum);
-
     void updateCinemaFranchise(CinemaFranchiseDTO cinemaFranchiseDTO);
 }

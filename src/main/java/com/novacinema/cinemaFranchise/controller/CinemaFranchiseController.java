@@ -14,7 +14,7 @@ public class CinemaFranchiseController {
     public CinemaFranchiseController(CinemaFranchiseService cinemaFranchiseService){
         this.cinemaFranchiseService=cinemaFranchiseService;
     }
-    /*db에서 얻어온 값  수신*/
+    /*db에서 얻어온 값  전달*/
     @GetMapping("/list")
     public ResponseEntity<List<CinemaFranchiseDTO>> getCinemaFranchiseList() {
         List<CinemaFranchiseDTO> franchiseList = cinemaFranchiseService.getAllCinemaFranchises();

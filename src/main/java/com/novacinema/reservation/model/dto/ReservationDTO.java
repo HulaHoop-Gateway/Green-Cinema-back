@@ -1,16 +1,28 @@
-package com.novacinema.cinemaFranchise.model.dto;
+package com.novacinema.reservation.model.dto;
+
+import java.time.LocalDateTime;
 
 public class ReservationDTO {
     private int reservationNum;     // 예매 고유번호
-    private int userCode;           // 회원 코드
-    private int movieNum;           // 영화 고유번호
-    private int scheduleNum;        // 일정 고유번호
-    private int seatCode;           // 좌석 고유번호
-    private String paymentTime;     // 결제 시간 (DATETIME → String 또는 LocalDateTime)
-    private String status;          // 예매 상태 (예: 예약완료, 취소 등)
+    private int userCode;           // 회원 코드 (FK)
+    private int movieNum;           // 영화 고유번호 (FK)
+    private int scheduleNum;        // 일정 고유번호 (FK)
+    private int seatCode;           // 좌석 고유번호 (FK)
+    private LocalDateTime paymentTime; // 결제 시간
+    private String status;          // 예매 상태 (예약완료, 취소 등)
 
     // 기본 생성자
     public ReservationDTO() {}
+
+    public ReservationDTO(int reservationNum, int userCode, int movieNum, int scheduleNum, int seatCode, LocalDateTime paymentTime, String status) {
+        this.reservationNum = reservationNum;
+        this.userCode = userCode;
+        this.movieNum = movieNum;
+        this.scheduleNum = scheduleNum;
+        this.seatCode = seatCode;
+        this.paymentTime = paymentTime;
+        this.status = status;
+    }
 
     public int getReservationNum() {
         return reservationNum;
@@ -52,11 +64,11 @@ public class ReservationDTO {
         this.seatCode = seatCode;
     }
 
-    public String getPaymentTime() {
+    public LocalDateTime getPaymentTime() {
         return paymentTime;
     }
 
-    public void setPaymentTime(String paymentTime) {
+    public void setPaymentTime(LocalDateTime paymentTime) {
         this.paymentTime = paymentTime;
     }
 
@@ -76,7 +88,7 @@ public class ReservationDTO {
                 ", movieNum=" + movieNum +
                 ", scheduleNum=" + scheduleNum +
                 ", seatCode=" + seatCode +
-                ", paymentTime='" + paymentTime + '\'' +
+                ", paymentTime=" + paymentTime +
                 ", status='" + status + '\'' +
                 '}';
     }

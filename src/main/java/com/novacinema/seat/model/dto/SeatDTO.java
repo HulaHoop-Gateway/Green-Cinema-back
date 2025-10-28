@@ -1,16 +1,20 @@
-package com.novacinema.cinemaFranchise.model.dto;
+package com.novacinema.seat.model.dto;
+
+import java.math.BigDecimal;
 
 public class SeatDTO {
-    private int seatCode;         // 좌석 고유 코드 (PK)
-    private String seatRow;       // 좌석 행 (예: A, B, C)
-    private int seatColumn;       // 좌석 열 (예: 1, 2, 3)
-    private String seatType;      // 좌석 종류 (예: 일반, 커플, 장애인석)
+    private int seatCode;         // 좌석 고유 코드
+    private char seatRow;         // 좌석 행 (A, B, C 등)
+    private int seatColumn;       // 좌석 열 (1, 2, 3 등)
+    private String seatType;      // 좌석 종류 (일반, VIP 등)
     private String seatRealNum;   // 실제 좌석 번호 (예: A10)
-    private double sale;          // 가격
-    private int screeningNum;// 상영관 번호 (FK)
-    public SeatDTO(){}
+    private BigDecimal sale;      // 가격
+    private int screeningNum;     // 상영관 번호 (외래키)
 
-    public SeatDTO(int seatCode, String seatRow, int seatColumn, String seatType, String seatRealNum, double sale, int screeningNum) {
+    // 기본 생성자
+    public SeatDTO() {}
+
+    public SeatDTO(int seatCode, char seatRow, int seatColumn, String seatType, String seatRealNum, BigDecimal sale, int screeningNum) {
         this.seatCode = seatCode;
         this.seatRow = seatRow;
         this.seatColumn = seatColumn;
@@ -28,11 +32,11 @@ public class SeatDTO {
         this.seatCode = seatCode;
     }
 
-    public String getSeatRow() {
+    public char getSeatRow() {
         return seatRow;
     }
 
-    public void setSeatRow(String seatRow) {
+    public void setSeatRow(char seatRow) {
         this.seatRow = seatRow;
     }
 
@@ -60,11 +64,11 @@ public class SeatDTO {
         this.seatRealNum = seatRealNum;
     }
 
-    public double getSale() {
+    public BigDecimal getSale() {
         return sale;
     }
 
-    public void setSale(double sale) {
+    public void setSale(BigDecimal sale) {
         this.sale = sale;
     }
 
@@ -80,7 +84,7 @@ public class SeatDTO {
     public String toString() {
         return "SeatDTO{" +
                 "seatCode=" + seatCode +
-                ", seatRow='" + seatRow + '\'' +
+                ", seatRow=" + seatRow +
                 ", seatColumn=" + seatColumn +
                 ", seatType='" + seatType + '\'' +
                 ", seatRealNum='" + seatRealNum + '\'' +
