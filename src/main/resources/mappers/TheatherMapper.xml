@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.novacinema.theater.model.dao.TheaterMapper">
+    <resultMap id="theaterResultMap" type="com.novacinema.theater.model.dto.TheaterDTO">
+        <id property="screeningNum" column="screening_num" />
+        <result property="screeningNumber" column="screening_number" />
+        <result property="branchNum" column="branch_num" />
+    </resultMap>
+    <select id="selectAllTheaters" resultMap="theaterResultMap">
+        SELECT
+        screening_num,
+        screening_number,
+        branch_num
+        FROM T_Theater
+    </select>
+</mapper>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.novacinema.seat.model.dao.SeatMapper">
+    <resultMap id="seatResultMap" type="com.novacinema.seat.model.dto.SeatDTO">
+        <id property="seatCode" column="seat_code"/>
+        <result property="seatRow" column="seat_row"/>
+        <result property="seatColumn" column="seat_column"/>
+        <result property="seatType" column="seat_type"/>
+        <result property="seatRealNum" column="seat_real_num"/>
+        <result property="sale" column="sale"/>
+        <result property="screeningNum" column="screening_num"/>
+    </resultMap>
+    <select id="selectAllSeats" resultMap="seatResultMap">
+        SELECT
+        seat_code,
+        seat_row,
+        seat_column,
+        seat_type,
+        seat_real_num,
+        sale,
+        screening_num
+        FROM T_Seat
+    </select>
+</mapper>

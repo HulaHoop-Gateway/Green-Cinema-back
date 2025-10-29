@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.novacinema.info.model.dao.InfoMapper">
+    <resultMap id="infoResultMap" type="com.novacinema.info.model.dto.InfoDTO">
+        <id property="movieNum" column="movie_num" />
+        <result property="movieTitle" column="movie_title" />
+        <result property="runningTime" column="running_time" />
+        <result property="audienceRating" column="audience_rating" />
+    </resultMap>
+    <select id="selectAllInfo" resultMap="infoResultMap">
+        SELECT
+        movie_num,
+        movie_title,
+        running_time,
+        audience_rating
+        FROM T_Info
+    </select>
+</mapper>
