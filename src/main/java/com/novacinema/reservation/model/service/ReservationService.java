@@ -19,4 +19,8 @@ public class ReservationService {
     public ReservationDTO getReservationById(int reservationNum){
         return reservationMapper.selectReservationById(reservationNum);
     }
+
+    public List<ReservationDTO> getReservationByUserCode(int userCode) {
+        return reservationMapper.findByUserCode(userCode);
+    }
 }

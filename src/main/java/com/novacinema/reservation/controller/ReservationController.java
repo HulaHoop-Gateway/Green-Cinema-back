@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:5173") // ✅ 바로 여기!
 @RequestMapping("/reservation")
 public class ReservationController {
     private final ReservationService reservationService;
@@ -33,5 +34,9 @@ public class ReservationController {
         return ResponseEntity.ok(reservationService.getReservationById(id));
     }
 
-
+    @GetMapping("/history")
+    public ResponseEntity<List<ReservationDTO>> getReservationHistory(@RequestParam int userCode) {
+        List<ReservationDTO> reservationList = reservationService.getReservationByUserCode(userCode);
+        return ResponseEntity.ok(reservationList);
+    }
 }

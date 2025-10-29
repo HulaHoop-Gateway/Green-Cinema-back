@@ -40,5 +40,20 @@
         SELECT * FROM T_ReservationInfo
     </select>
 
+    <!-- ✅ 회원별 예약 조회 쿼리 추가 -->
+    <select id="findByUserCode" resultMap="reservationResultMap" parameterType="int">
+        SELECT
+        reservation_num,
+        user_code,
+        movie_num,
+        schedule_num,
+        seat_code,
+        payment_time,
+        status
+        FROM T_ReservationInfo
+        WHERE user_code = #{userCode}
+    </select>
+
+
 
 </mapper>
