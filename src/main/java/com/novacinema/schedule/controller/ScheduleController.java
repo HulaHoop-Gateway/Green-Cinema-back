@@ -1,7 +1,5 @@
-package com.novacinema.schedule.model.controller;
+package com.novacinema.schedule.controller;
 
-import com.novacinema.cinemaFranchise.model.dto.CinemaFranchiseDTO;
-import com.novacinema.cinemaFranchise.model.service.CinemaFranchiseService;
 import com.novacinema.schedule.model.dto.ScheduleDTO;
 import com.novacinema.schedule.model.service.ScheduleService;
 import org.springframework.http.ResponseEntity;
