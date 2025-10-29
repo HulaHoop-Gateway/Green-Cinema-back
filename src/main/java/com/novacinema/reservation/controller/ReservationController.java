@@ -23,17 +23,6 @@ public class ReservationController {
         List<ReservationDTO> reservationList=reservationService.getAllReservations();
         return ResponseEntity.ok(reservationList);
     }
-    @GetMapping("/list3")
-    public ResponseEntity<List<ReservationDTO>> getReservationDTOList3() {
-        List<ReservationDTO> reservationList=reservationService.getAllReservations();
-        return ResponseEntity.ok(reservationList);
-    }
-    @GetMapping("/{id}")
-    public ResponseEntity<ReservationDTO> getReservation(@PathVariable int id) {
-        System.out.println("test");
-        return ResponseEntity.ok(reservationService.getReservationById(id));
-    }
-
     @GetMapping("/history")
     public ResponseEntity<List<ReservationDTO>> getReservationHistory(@RequestParam int userCode) {
         List<ReservationDTO> reservationList = reservationService.getReservationByUserCode(userCode);
