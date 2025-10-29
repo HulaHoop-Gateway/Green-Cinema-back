@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.novacinema.cinemaFranchise.model.dao.MovieMapper">
+
+    <!-- 1. 가까운 영화관 조회 -->
+    <select id="findNearestCinemas" parameterType="string" resultType="map">
+        SELECT
+            c.branch_name AS branch_name,
+            c.address AS address
+        FROM T_CinemaFranchise c
+        ORDER BY c.branch_num ASC
+            LIMIT 3
+    </select>
+
+    <!-- 2. 선택한 영화관의 상영 영화 조회 (오늘 포함 ~ 5일간) -->
+    <select id="findNowPlaying" parameterType="string" resultType="map">
+    <![CDATA[
+        SELECT
+            i.movie_title AS movie_title,
+            s.screening_date AS screening_date,
+            i.running_time AS running_time,
+            i.audience_rating AS audience_rating
+        FROM T_Info i
+                 JOIN T_Schedule s ON i.movie_num = s.movie_num
+                 JOIN T_Theater t ON s.screening_num = t.screening_num
+                 JOIN T_CinemaFranchise c ON t.branch_num = c.branch_num
+        WHERE REPLACE(c.branch_name, ' ', '') LIKE CONCAT('%', REPLACE(#{branchName}, ' ', ''), '%')
+          AND s.screening_date >= NOW()
+          AND s.screening_date <= DATE_ADD(NOW(), INTERVAL 5 DAY)
+        ORDER BY s.screening_date ASC
+        ]]>
+</select>
+
+
+    <!-- 3. 선택한 영화의 좌석 상태 조회 -->
+    <select id="findSeatStatus" resultType="map">
+        SELECT
+            s.seat_real_num AS seat,
+            s.seat_type AS seatType,
+            CASE
+                WHEN s.seat_code IN (
+                    SELECT seat_number
+                    FROM T_ReservationInfo
+                    WHERE state = '결제완료'
+                ) THEN 0
+                ELSE 1
+                END AS available
+        FROM T_Seat s
+                 JOIN T_Schedule sch ON s.schedule_num = sch.schedule_num
+                 JOIN T_Info i ON sch.movie_num = i.movie_num
+                 JOIN T_Theater t ON sch.screening_num = t.screening_num
+                 JOIN T_CinemaFranchise c ON t.branch_num = c.branch_num
+        WHERE REPLACE(c.branch_name, ' ', '') LIKE CONCAT('%', REPLACE(#{branchName}, ' ', ''), '%')
+          AND i.movie_title = #{movieTitle}
+        ORDER BY s.seat_real_num ASC
+    </select>
+
+    <!-- 4. 좌석 예약 -->
+    <insert id="reserveSeat">
+        INSERT INTO T_ReservationInfo (
+            reservation_num, seat_number, customer_name,
+            payment_time, seat_num, state, member_code
+        )
+        VALUES (
+                   (SELECT IFNULL(MAX(reservation_num), 2000) + 1 FROM T_ReservationInfo),
+                   (SELECT seat_code FROM T_Seat WHERE seat_real_num = #{seat}),
+                   #{memberName},
+                   NOW(),
+                   (SELECT seat_code FROM T_Seat WHERE seat_real_num = #{seat}),
+                   '결제완료',
+                   (SELECT member_code FROM T_MemberInfo WHERE member_name = #{memberName})
+               );
+    </insert>
+
+</mapper>
