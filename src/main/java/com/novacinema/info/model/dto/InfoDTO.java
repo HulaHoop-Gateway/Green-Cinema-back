@@ -1,4 +1,4 @@
-package com.novacinema.Info.model.dto;
+package com.novacinema.info.model.dto;
 
 public class InfoDTO {
     private int movieNum;            // 영화 고유 번호
