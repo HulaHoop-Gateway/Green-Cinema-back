@@ -3,24 +3,139 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.novacinema.seat.model.dao.SeatMapper">
+
     <resultMap id="seatResultMap" type="com.novacinema.seat.model.dto.SeatDTO">
         <id property="seatCode" column="seat_code"/>
-        <result property="seatRow" column="seat_row"/>
-        <result property="seatColumn" column="seat_column"/>
         <result property="seatType" column="seat_type"/>
         <result property="seatRealNum" column="seat_real_num"/>
         <result property="sale" column="sale"/>
         <result property="screeningNum" column="screening_num"/>
+
+        <!-- 좌석 기준 상영관 정보 -->
+        <association property="theaterDTO" javaType="com.novacinema.theater.model.dto.TheaterDTO">
+            <id property="screeningNum" column="screening_num"/>
+            <result property="screeningNumber" column="screening_number"/>
+            <result property="branchNum" column="branch_num"/>
+            <association property="cinemaFranchisedto" javaType="com.novacinema.cinemaFranchise.model.dto.CinemaFranchiseDTO">
+                <id property="branchNum" column="branch_num"/>
+                <result property="branchName" column="branch_name"/>
+                <result property="address" column="address"/>
+            </association>
+        </association>
+
+        <!-- 상영 일정 정보 -->
+        <association property="scheduleDTO" javaType="com.novacinema.schedule.model.dto.ScheduleDTO">
+            <id property="scheduleNum" column="schedule_num"/>
+            <result property="screeningDate" column="screening_date"/>
+            <result property="screeningNum" column="schedule_screening_num"/>
+            <result property="movieNum" column="movie_num"/>
+
+            <!-- 영화 정보 -->
+            <association property="movieInfo" javaType="com.novacinema.info.model.dto.InfoDTO">
+                <id property="movieNum" column="movie_num"/>
+                <result property="movieTitle" column="movie_title"/>
+                <result property="runningTime" column="running_time"/>
+                <result property="audienceRating" column="audience_rating"/>
+            </association>
+
+            <!-- 스케줄 기준 상영관 정보 -->
+            <association property="theaterInfo" javaType="com.novacinema.theater.model.dto.TheaterDTO">
+                <id property="screeningNum" column="schedule_screening_num"/>
+                <result property="screeningNumber" column="schedule_screening_number"/>
+                <result property="branchNum" column="schedule_branch_num"/>
+                <association property="cinemaFranchisedto" javaType="com.novacinema.cinemaFranchise.model.dto.CinemaFranchiseDTO">
+                    <id property="branchNum" column="schedule_branch_num"/>
+                    <result property="branchName" column="schedule_branch_name"/>
+                    <result property="address" column="schedule_address"/>
+                </association>
+            </association>
+        </association>
     </resultMap>
+
     <select id="selectAllSeats" resultMap="seatResultMap">
         SELECT
-        seat_code,
-        seat_row,
-        seat_column,
-        seat_type,
-        seat_real_num,
-        sale,
-        screening_num
-        FROM T_Seat
+        s.seat_code,
+        s.seat_type,
+        s.seat_real_num,
+        s.sale,
+        s.screening_num,
+
+        -- 좌석 기준 상영관 정보
+        t.screening_number,
+        t.branch_num,
+        f.branch_name,
+        f.address,
+
+        -- 스케줄 정보
+        sch.schedule_num,
+        sch.screening_date,
+        sch.screening_num AS schedule_screening_num,
+        tt.screening_number AS schedule_screening_number,
+        tt.branch_num AS schedule_branch_num,
+        sch.movie_num,
+
+        -- 영화 정보
+        i.movie_title,
+        i.running_time,
+        i.audience_rating,
+
+        -- 스케줄 기준 지점 정보
+        ff.branch_name AS schedule_branch_name,
+        ff.address AS schedule_address
+
+        FROM T_Seat s
+        JOIN T_Theater t ON s.screening_num = t.screening_num
+        JOIN T_CinemaFranchise f ON t.branch_num = f.branch_num
+
+        LEFT JOIN T_Schedule sch ON s.screening_num = sch.screening_num
+        LEFT JOIN T_Theater tt ON sch.screening_num = tt.screening_num
+        LEFT JOIN T_CinemaFranchise ff ON tt.branch_num = ff.branch_num
+        LEFT JOIN T_Info i ON sch.movie_num = i.movie_num
     </select>
+    <select id="selectAllSeatsBySchedule" resultMap="seatResultMap">
+        SELECT
+        s.seat_code,
+        s.seat_type,
+        s.seat_real_num,
+        s.sale,
+        s.screening_num,
+
+        -- 좌석 기준 상영관 정보
+        t.screening_number,
+        t.branch_num,
+        f.branch_name,
+        f.address,
+
+        -- 스케줄 정보
+        sch.schedule_num,
+        sch.screening_date,
+        sch.screening_num AS schedule_screening_num,
+        tt.screening_number AS schedule_screening_number,
+        tt.branch_num AS schedule_branch_num,
+        sch.movie_num,
+
+        -- 영화 정보
+        i.movie_title,
+        i.running_time,
+        i.audience_rating,
+
+        -- 스케줄 기준 지점 정보
+        ff.branch_name AS schedule_branch_name,
+        ff.address AS schedule_address
+
+        FROM T_Seat s
+        JOIN T_Theater t ON s.screening_num = t.screening_num
+        JOIN T_CinemaFranchise f ON t.branch_num = f.branch_num
+
+        LEFT JOIN T_Schedule sch ON s.screening_num = sch.screening_num
+        LEFT JOIN T_Theater tt ON sch.screening_num = tt.screening_num
+        LEFT JOIN T_CinemaFranchise ff ON tt.branch_num = ff.branch_num
+        LEFT JOIN T_Info i ON sch.movie_num = i.movie_num
+
+        WHERE sch.schedule_num = #{scheduleNum}
+    </select>
+
+
+
+
 </mapper>

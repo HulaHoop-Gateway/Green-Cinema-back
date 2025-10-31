@@ -6,6 +6,8 @@ import com.novacinema.user.model.dto.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class UserService {
 
@@ -18,5 +20,9 @@ public class UserService {
             return user;
         }
         return null;
+    }
+
+    public List<UserDTO> getAllUsers() {
+        return userMapper.selectAllUsers();
     }
 }

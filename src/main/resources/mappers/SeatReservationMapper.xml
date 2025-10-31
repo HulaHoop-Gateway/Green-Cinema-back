@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.novacinema.SeatReservationId.SeatReservationMapper">
+
+    <resultMap id="SeatReservationResultMap" type="com.novacinema.SeatReservationId.SeatReservationDTO">
+        <id property="reservationId" column="reservation_id"/>
+        <result property="scheduleNum" column="schedule_num"/>
+        <result property="seatCode" column="seat_code"/>
+        <result property="reserved" column="reserved"/>
+        <result property="reservedAt" column="reserved_at"/>
+    </resultMap>
+
+    <select id="getReservedSeatsBySchedule" resultMap="SeatReservationResultMap">
+        SELECT *
+        FROM T_SeatReservation
+        WHERE schedule_num = #{scheduleNum}
+        AND reserved = 1
+    </select>
+
+</mapper>

@@ -5,6 +5,7 @@ import com.novacinema.cinemaFranchise.model.service.CinemaFranchiseService;
 import com.novacinema.seat.model.dto.SeatDTO;
 import com.novacinema.seat.model.service.SeatService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,4 +26,15 @@ public class SeatController {
         List<SeatDTO> seatDTOList = seatService.getAllSeats();
         return ResponseEntity.ok(seatDTOList);
     }
+    @GetMapping("/all")
+    public String showAllSeats(@RequestParam("scheduleNum") int scheduleNum, Model model) {
+        List<SeatDTO> seatList = seatService.getAllSeatsBySchedule(scheduleNum);
+        model.addAttribute("seatList", seatList);
+        return "seat/allSeats";
+    }
+
+
+
+
+
 }

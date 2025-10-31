@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>예매 등록</title>
+</head>
+<body>
+<h2>예매 등록</h2>
+
+<form th:action="@{/reservation/register}" th:object="${reservationDTO}" method="post">
+    <!-- 예약 번호 -->
+    <label for="reservationNum">예약 번호:</label>
+    <input type="number" id="reservationNum" th:field="*{reservationNum}" required><br><br>
+
+    <!-- 회원 코드 -->
+    <label for="memberCode">회원 코드:</label>
+    <input type="number" id="memberCode" th:field="*{memberCode}" required><br><br>
+
+    <!-- 상영 일정 번호 -->
+    <label for="scheduleNum">상영 일정 번호:</label>
+    <input type="number" id="scheduleNum" th:field="*{scheduleNum}" required><br><br>
+
+    <!-- 좌석 코드 -->
+    <label for="seatNumber">좌석 코드:</label>
+    <input type="number" id="seatNumber" th:field="*{seatNumber}" required><br><br>
+
+    <!-- 결제 시간 -->
+    <label for="paymentTime">결제 시간:</label>
+    <input type="datetime-local" id="paymentTime" th:field="*{paymentTime}" required><br><br>
+
+    <!-- 상태 -->
+    <label for="state">예매 상태:</label>
+    <select id="state" th:field="*{state}">
+        <option value="예약완료">예약완료</option>
+        <option value="결제완료">결제완료</option>
+        <option value="취소됨">취소됨</option>
+    </select><br><br>
+
+    <button type="submit">예매 등록</button>
+</form>
+
+</body>
+</html>

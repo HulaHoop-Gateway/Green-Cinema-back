@@ -14,13 +14,11 @@ public class ReservationService {
     }
 
     public List<ReservationDTO> getAllReservations() {
-        return reservationMapper.selectAllReservation();
+        return reservationMapper.selectAllReservations();
     }
-    public ReservationDTO getReservationById(int reservationNum){
-        return reservationMapper.selectReservationById(reservationNum);
+    public boolean registerReservation(ReservationDTO dto) {
+        int result = reservationMapper.insertReservation(dto);
+        return result > 0;
     }
 
-    public List<ReservationDTO> getReservationByUserCode(int userCode) {
-        return reservationMapper.findByUserCode(userCode);
-    }
 }

@@ -15,5 +15,8 @@ public class SeatService {
     public List<SeatDTO> getAllSeats(){
         return seatMapper.selectAllSeats();
     }
+    public List<SeatDTO> getAllSeatsBySchedule(int scheduleNum) {
+        return seatMapper.selectAllSeatsBySchedule(scheduleNum);
+    }
 }
 
