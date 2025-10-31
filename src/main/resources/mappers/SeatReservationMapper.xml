@@ -17,7 +17,7 @@
         FROM T_SeatReservation
         WHERE schedule_num = #{scheduleNum}
         AND reserved = 1
-        
+
     </select>
 
 </mapper>
