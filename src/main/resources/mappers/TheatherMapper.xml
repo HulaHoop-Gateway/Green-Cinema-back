@@ -7,12 +7,24 @@
         <id property="screeningNum" column="screening_num" />
         <result property="screeningNumber" column="screening_number" />
         <result property="branchNum" column="branch_num" />
+
+        <!-- CinemaFranchiseDTO 매핑 -->
+        <association property="cinemaFranchisedto" javaType="com.novacinema.cinemaFranchise.model.dto.CinemaFranchiseDTO">
+            <id property="branchNum" column="branch_num" />
+            <result property="branchName" column="branch_name" />
+            <result property="address" column="address" />
+        </association>
     </resultMap>
+
     <select id="selectAllTheaters" resultMap="theaterResultMap">
         SELECT
-        screening_num,
-        screening_number,
-        branch_num
-        FROM T_Theater
+        t.screening_num,
+        t.screening_number,
+        t.branch_num,
+        f.branch_name,
+        f.address
+        FROM T_Theater t
+        JOIN T_CinemaFranchise f ON t.branch_num = f.branch_num
     </select>
+
 </mapper>

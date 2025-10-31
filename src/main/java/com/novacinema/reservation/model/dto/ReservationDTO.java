@@ -1,27 +1,37 @@
 package com.novacinema.reservation.model.dto;
 
+import com.novacinema.cinemaFranchise.model.dto.CinemaFranchiseDTO;
+import com.novacinema.info.model.dto.InfoDTO;
+import com.novacinema.schedule.model.dto.ScheduleDTO;
+import com.novacinema.seat.model.dto.SeatDTO;
+import com.novacinema.theater.model.dto.TheaterDTO;
+import com.novacinema.user.model.dto.UserDTO;
+
 import java.time.LocalDateTime;
 
 public class ReservationDTO {
-    private int reservationNum;     // 예매 고유번호
-    private int userCode;           // 회원 코드 (FK)
-    private int movieNum;           // 영화 고유번호 (FK)
-    private int scheduleNum;        // 일정 고유번호 (FK)
-    private int seatCode;           // 좌석 고유번호 (FK)
-    private LocalDateTime paymentTime; // 결제 시간
-    private String status;          // 예매 상태 (예약완료, 취소 등)
+    private int reservationNum;       // 예매 고유번호
+    private int seatNumber;           // 좌석 코드
+    private LocalDateTime paymentTime;// 결제 시간
+    private String state;             // 예약 상태
+    private int memberCode;           // 회원 코드
+    private int scheduleNum;          // 상영 일정 코드
 
-    // 기본 생성자
-    public ReservationDTO() {}
+    private SeatDTO seatDTO;
+    private UserDTO userDTO;
+    private ScheduleDTO scheduleDTO;
 
-    public ReservationDTO(int reservationNum, int userCode, int movieNum, int scheduleNum, int seatCode, LocalDateTime paymentTime, String status) {
+    public ReservationDTO(){}
+    public ReservationDTO(int reservationNum, int seatNumber, LocalDateTime paymentTime, String state, int memberCode, int scheduleNum, SeatDTO seatDTO, UserDTO userDTO, ScheduleDTO scheduleDTO) {
         this.reservationNum = reservationNum;
-        this.userCode = userCode;
-        this.movieNum = movieNum;
-        this.scheduleNum = scheduleNum;
-        this.seatCode = seatCode;
+        this.seatNumber = seatNumber;
         this.paymentTime = paymentTime;
-        this.status = status;
+        this.state = state;
+        this.memberCode = memberCode;
+        this.scheduleNum = scheduleNum;
+        this.seatDTO = seatDTO;
+        this.userDTO = userDTO;
+        this.scheduleDTO = scheduleDTO;
     }
 
     public int getReservationNum() {
@@ -32,36 +42,12 @@ public class ReservationDTO {
         this.reservationNum = reservationNum;
     }
 
-    public int getUserCode() {
-        return userCode;
+    public int getSeatNumber() {
+        return seatNumber;
     }
 
-    public void setUserCode(int userCode) {
-        this.userCode = userCode;
-    }
-
-    public int getMovieNum() {
-        return movieNum;
-    }
-
-    public void setMovieNum(int movieNum) {
-        this.movieNum = movieNum;
-    }
-
-    public int getScheduleNum() {
-        return scheduleNum;
-    }
-
-    public void setScheduleNum(int scheduleNum) {
-        this.scheduleNum = scheduleNum;
-    }
-
-    public int getSeatCode() {
-        return seatCode;
-    }
-
-    public void setSeatCode(int seatCode) {
-        this.seatCode = seatCode;
+    public void setSeatNumber(int seatNumber) {
+        this.seatNumber = seatNumber;
     }
 
     public LocalDateTime getPaymentTime() {
@@ -72,24 +58,66 @@ public class ReservationDTO {
         this.paymentTime = paymentTime;
     }
 
-    public String getStatus() {
-        return status;
+    public String getState() {
+        return state;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    public int getMemberCode() {
+        return memberCode;
+    }
+
+    public void setMemberCode(int memberCode) {
+        this.memberCode = memberCode;
+    }
+
+    public int getScheduleNum() {
+        return scheduleNum;
+    }
+
+    public void setScheduleNum(int scheduleNum) {
+        this.scheduleNum = scheduleNum;
+    }
+
+    public SeatDTO getSeatDTO() {
+        return seatDTO;
+    }
+
+    public void setSeatDTO(SeatDTO seatDTO) {
+        this.seatDTO = seatDTO;
+    }
+
+    public UserDTO getUserDTO() {
+        return userDTO;
+    }
+
+    public void setUserDTO(UserDTO userDTO) {
+        this.userDTO = userDTO;
+    }
+
+    public ScheduleDTO getScheduleDTO() {
+        return scheduleDTO;
+    }
+
+    public void setScheduleDTO(ScheduleDTO scheduleDTO) {
+        this.scheduleDTO = scheduleDTO;
     }
 
     @Override
     public String toString() {
         return "ReservationDTO{" +
                 "reservationNum=" + reservationNum +
-                ", userCode=" + userCode +
-                ", movieNum=" + movieNum +
-                ", scheduleNum=" + scheduleNum +
-                ", seatCode=" + seatCode +
+                ", seatNumber=" + seatNumber +
                 ", paymentTime=" + paymentTime +
-                ", status='" + status + '\'' +
+                ", state='" + state + '\'' +
+                ", memberCode=" + memberCode +
+                ", scheduleNum=" + scheduleNum +
+                ", seatDTO=" + seatDTO +
+                ", userDTO=" + userDTO +
+                ", scheduleDTO=" + scheduleDTO +
                 '}';
     }
 }

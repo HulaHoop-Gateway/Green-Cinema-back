@@ -1,20 +1,31 @@
 package com.novacinema.schedule.model.dto;
 
+import com.novacinema.info.model.dto.InfoDTO;
+import com.novacinema.theater.model.dto.TheaterDTO;
+
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 public class ScheduleDTO {
-    private int scheduleNum;           // 일정 고유 번호
-    private LocalDate screeningDate;   // 상영 날짜
-    private LocalTime startTime;       // 시작 시간
+    private int scheduleNum;
+    private String screeningDate;
+    private int screeningNum;
+    private int movieNum;
 
-    // 기본 생성자
-    public ScheduleDTO() {}
+    private InfoDTO movieInfo;
+    private TheaterDTO theaterInfo;
 
-    public ScheduleDTO(int scheduleNum, LocalDate screeningDate, LocalTime startTime) {
+    public ScheduleDTO() {
+    }
+
+    public ScheduleDTO(int scheduleNum, String screeningDate, int screeningNum, int movieNum, InfoDTO movieInfo, TheaterDTO theaterInfo) {
         this.scheduleNum = scheduleNum;
         this.screeningDate = screeningDate;
-        this.startTime = startTime;
+        this.screeningNum = screeningNum;
+        this.movieNum = movieNum;
+        this.movieInfo = movieInfo;
+        this.theaterInfo = theaterInfo;
     }
 
     public int getScheduleNum() {
@@ -25,28 +36,55 @@ public class ScheduleDTO {
         this.scheduleNum = scheduleNum;
     }
 
-    public LocalDate getScreeningDate() {
+    public String getScreeningDate() {
         return screeningDate;
     }
 
-    public void setScreeningDate(LocalDate screeningDate) {
+    public void setScreeningDate(String screeningDate) {
         this.screeningDate = screeningDate;
     }
 
-    public LocalTime getStartTime() {
-        return startTime;
+    public int getScreeningNum() {
+        return screeningNum;
     }
 
-    public void setStartTime(LocalTime startTime) {
-        this.startTime = startTime;
+    public void setScreeningNum(int screeningNum) {
+        this.screeningNum = screeningNum;
+    }
+
+    public int getMovieNum() {
+        return movieNum;
+    }
+
+    public void setMovieNum(int movieNum) {
+        this.movieNum = movieNum;
+    }
+
+    public InfoDTO getMovieInfo() {
+        return movieInfo;
+    }
+
+    public void setMovieInfo(InfoDTO movieInfo) {
+        this.movieInfo = movieInfo;
+    }
+
+    public TheaterDTO getTheaterInfo() {
+        return theaterInfo;
+    }
+
+    public void setTheaterInfo(TheaterDTO theaterInfo) {
+        this.theaterInfo = theaterInfo;
     }
 
     @Override
     public String toString() {
         return "ScheduleDTO{" +
                 "scheduleNum=" + scheduleNum +
-                ", screeningDate=" + screeningDate +
-                ", startTime=" + startTime +
+                ", screeningDate='" + screeningDate + '\'' +
+                ", screeningNum=" + screeningNum +
+                ", movieNum=" + movieNum +
+                ", movieInfo=" + movieInfo +
+                ", theaterInfo=" + theaterInfo +
                 '}';
     }
 }

@@ -19,4 +19,5 @@ public class ScheduleService {
     public List<ScheduleDTO> getAllSchedules() {
         return scheduleMapper.selectAllSchedules();
     }
+
 }

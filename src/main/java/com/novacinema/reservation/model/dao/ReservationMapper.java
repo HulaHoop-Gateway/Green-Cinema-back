@@ -7,9 +7,7 @@ import java.util.List;
 
 @Mapper
 public interface ReservationMapper {
-    List<ReservationDTO> selectAllReservation();
-    ReservationDTO selectReservationById(int reservationNum);
+    List<ReservationDTO> selectAllReservations();
+    int insertReservation(ReservationDTO reservationDTO);
 
-    // ✅ 회원별 예약 조회 추가
-    List<ReservationDTO> findByUserCode(int userCode);
 }

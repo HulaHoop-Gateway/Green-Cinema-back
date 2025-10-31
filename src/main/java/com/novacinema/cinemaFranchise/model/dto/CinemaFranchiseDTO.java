@@ -3,25 +3,23 @@ package com.novacinema.cinemaFranchise.model.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class CinemaFranchiseDTO {
-    @JsonProperty
-    private int branchNum;
-    @JsonProperty
-    private String branchName;
-    @JsonProperty
-    private String address;
+    private String branchNum;      // 지점 번호 (PK)
+    private String branchName;     // 지점 이름
+    private String address;        // 지점 주소
+
     public CinemaFranchiseDTO(){}
 
-    public CinemaFranchiseDTO(int branchNum, String branchName, String address) {
+    public CinemaFranchiseDTO(String branchNum, String branchName, String address) {
         this.branchNum = branchNum;
         this.branchName = branchName;
         this.address = address;
     }
 
-    public int getBranchNum() {
+    public String getBranchNum() {
         return branchNum;
     }
 
-    public void setBranchNum(int branchNum) {
+    public void setBranchNum(String branchNum) {
         this.branchNum = branchNum;
     }
 
@@ -44,7 +42,7 @@ public class CinemaFranchiseDTO {
     @Override
     public String toString() {
         return "CinemaFranchiseDTO{" +
-                "branchNum=" + branchNum +
+                "branchNum='" + branchNum + '\'' +
                 ", branchName='" + branchName + '\'' +
                 ", address='" + address + '\'' +
                 '}';
