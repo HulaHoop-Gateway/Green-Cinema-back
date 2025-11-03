@@ -1,37 +1,35 @@
 package com.novacinema.user.model.dto;
-
 public class UserDTO {
-    private int userCode;       // 회원코드
-    private String name;        // 회원명
-    private String id;          // 아이디
-    private String password;    // 비밀번호
-    private String phone;       // 전화번호
+    private int memberCode;
+    private String memberName;
+    private String id;
+    private String password;
+    private String phoneNumber;
 
-    // 기본 생성자
     public UserDTO() {}
 
-    public UserDTO(int userCode, String name, String id, String password, String phone) {
-        this.userCode = userCode;
-        this.name = name;
+    public UserDTO(int memberCode, String memberName, String id, String password, String phoneNumber) {
+        this.memberCode = memberCode;
+        this.memberName = memberName;
         this.id = id;
         this.password = password;
-        this.phone = phone;
+        this.phoneNumber = phoneNumber;
     }
 
-    public int getUserCode() {
-        return userCode;
+    public int getMemberCode() {
+        return memberCode;
     }
 
-    public void setUserCode(int userCode) {
-        this.userCode = userCode;
+    public void setMemberCode(int memberCode) {
+        this.memberCode = memberCode;
     }
 
-    public String getName() {
-        return name;
+    public String getMemberName() {
+        return memberName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setMemberName(String memberName) {
+        this.memberName = memberName;
     }
 
     public String getId() {
@@ -50,22 +48,22 @@ public class UserDTO {
         this.password = password;
     }
 
-    public String getPhone() {
-        return phone;
+    public String getPhoneNumber() {
+        return phoneNumber;
     }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 
     @Override
     public String toString() {
-        return "UserDTO{" +
-                "userCode=" + userCode +
-                ", name='" + name + '\'' +
+        return "MemberInfoDTO{" +
+                "memberCode=" + memberCode +
+                ", memberName='" + memberName + '\'' +
                 ", id='" + id + '\'' +
                 ", password='" + password + '\'' +
-                ", phone='" + phone + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
                 '}';
     }
 }
