@@ -16,7 +16,8 @@ public class MovieController {
         this.movieService = movieService;
     }
 
-    // 🎯 게이트웨이(8080)에서 들어오는 intent 처리
+
+    //Movie 서버가 DB 처리 후 결과 반환
     @PostMapping("/dispatch")
     public ResponseEntity<Map<String, Object>> handleIntent(@RequestBody Map<String, Object> payload) {
         String intent = (String) payload.get("intent");
