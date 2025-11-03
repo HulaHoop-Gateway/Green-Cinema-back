@@ -26,7 +26,7 @@ public class ReservationController {
     }
     @GetMapping("/history")
     public ResponseEntity<List<ReservationDTO>> getReservationHistory(@RequestParam int userCode) {
-        List<ReservationDTO> reservationList = reservationService.getAllReservations();
+        List<ReservationDTO> reservationList = reservationService.findByUserCode(userCode);
         return ResponseEntity.ok(reservationList);
     }
 

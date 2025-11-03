@@ -57,11 +57,11 @@
         </association>
 
         <association property="userDTO" javaType="com.novacinema.user.model.dto.UserDTO">
-            <result property="userCode" column="member_code"/>
-            <result property="name" column="member_name"/>
+            <result property="memberCode" column="member_code"/>
+            <result property="memberName" column="member_name"/>
             <result property="id" column="id"/>
             <result property="password" column="password"/>
-            <result property="phone" column="phone_number"/>
+            <result property="phoneNumber" column="phone_number"/>
         </association>
 
         <association property="scheduleDTO" javaType="com.novacinema.schedule.model.dto.ScheduleDTO">
@@ -180,5 +180,44 @@
         #{scheduleNum}
         )
     </insert>
+
+    <select id="selectByUserCode" resultMap="reservationInfoDetailResultMap">
+        SELECT
+        r.reservation_num,
+        r.seat_number,
+        r.payment_time,
+        r.state,
+        r.member_code,
+        r.schedule_num,
+        s.screening_date,
+        s.screening_num,
+        s.movie_num,
+        f.movie_title,
+        f.running_time,
+        f.audience_rating,
+        t.screening_number,
+        t.branch_num,
+        c.branch_name,
+        c.address,
+        m.id,
+        m.member_name,
+        m.password,
+        m.phone_number,
+        seat.seat_code,
+        seat.seat_type,
+        seat.seat_real_num,
+        seat.sale,
+        seat.screening_num
+        FROM T_ReservationInfo r
+        JOIN T_Schedule s ON r.schedule_num = s.schedule_num
+        JOIN T_Info f ON s.movie_num = f.movie_num
+        JOIN T_Theater t ON s.screening_num = t.screening_num
+        JOIN T_CinemaFranchise c ON t.branch_num = c.branch_num
+        JOIN T_MemberInfo m ON r.member_code = m.member_code
+        JOIN T_Seat seat ON r.seat_number = seat.seat_code
+        WHERE r.member_code = #{userCode}
+    </select>
+
+
 
 </mapper>

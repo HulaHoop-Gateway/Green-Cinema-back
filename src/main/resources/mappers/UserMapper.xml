@@ -1,27 +1,39 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-                "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.novacinema.user.model.dao.UserMapper">
 
-<!-- 결과 매핑 -->
-<resultMap id="userResultMap" type="com.novacinema.user.model.dto.UserDTO">
-    <id property="userCode" column="member_code"/>
-    <result property="name" column="member_name"/>
-    <result property="id" column="id"/>
-    <result property="password" column="password"/>
-    <result property="phone" column="phone_number"/>
-</resultMap>
+    <!-- 결과 매핑 -->
+    <resultMap id="userResultMap" type="com.novacinema.user.model.dto.UserDTO">
+        <id property="memberCode" column="member_code"/>
+        <result property="memberName" column="member_name"/>
+        <result property="id" column="id"/>
+        <result property="password" column="password"/>
+        <result property="phoneNumber" column="phone_number"/>
+    </resultMap>
 
-<!-- 전체 회원 조회 -->
-<select id="selectAllUsers" resultMap="userResultMap">
-    SELECT
+    <!-- ID로 회원 조회 -->
+    <select id="findById" resultMap="userResultMap">
+        SELECT
         member_code,
         member_name,
         id,
         password,
         phone_number
-    FROM T_MemberInfo
-</select>
+        FROM T_MemberInfo
+        WHERE id = #{id}
+    </select>
+
+    <!-- 전체 회원 조회 -->
+    <select id="selectAllUsers" resultMap="userResultMap">
+        SELECT
+        member_code,
+        member_name,
+        id,
+        password,
+        phone_number
+        FROM T_MemberInfo
+    </select>
 
 </mapper>
 
