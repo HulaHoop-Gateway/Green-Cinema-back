@@ -2,22 +2,70 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.novacinema.SeatReservationId.SeatReservationMapper">
+<mapper namespace="com.novacinema.SeatReservationId.model.dao.SeatReservationMapper">
 
-    <resultMap id="SeatReservationResultMap" type="com.novacinema.SeatReservationId.SeatReservationDTO">
+    <resultMap id="SeatReservationResultMap" type="com.novacinema.SeatReservationId.model.dto.SeatReservationDTO">
         <id property="reservationId" column="reservation_id"/>
         <result property="scheduleNum" column="schedule_num"/>
         <result property="seatCode" column="seat_code"/>
         <result property="reserved" column="reserved"/>
         <result property="reservedAt" column="reserved_at"/>
+
+        <association property="seatInfo" javaType="com.novacinema.seat.model.dto.SeatDTO">
+            <id property="seatCode" column="seat_code"/>
+            <result property="seatRealNum" column="seat_real_num"/>
+            <result property="seatType" column="seat_type"/>
+            <result property="sale" column="sale"/>
+            <result property="screeningNum" column="screening_num"/>
+        </association>
+    </resultMap>
+    <resultMap id="AvailableSeatResultMap" type="com.novacinema.seat.model.dto.SeatDTO">
+        <id property="seatCode" column="seat_code"/>
+        <result property="seatType" column="seat_type"/>
+        <result property="seatRealNum" column="seat_real_num"/>
+        <result property="sale" column="sale"/>
+        <result property="screeningNum" column="screening_num"/>
     </resultMap>
 
-    <select id="getReservedSeatsBySchedule" resultMap="SeatReservationResultMap">
-        SELECT *
-        FROM T_SeatReservation
-        WHERE schedule_num = #{scheduleNum}
-        AND reserved = 1
 
+
+    <select id="getAvailableSeatsBySchedule" resultMap="AvailableSeatResultMap">
+        SELECT s.seat_code, s.seat_type, s.seat_real_num, s.sale, s.screening_num
+        FROM T_Seat s
+        LEFT JOIN T_SeatReservation r
+        ON s.seat_code = r.seat_code AND r.schedule_num = #{scheduleNum}
+        WHERE s.screening_num = (
+        SELECT screening_num
+        FROM T_Schedule
+        WHERE schedule_num = #{scheduleNum}
+        )
+        AND (r.reserved IS NULL OR r.reserved = 0)
     </select>
+
+
+
+
+    <select id="getAllReservations" resultMap="SeatReservationResultMap">
+        SELECT r.*, s.seat_real_num, s.seat_type, s.sale, s.screening_num
+        FROM T_SeatReservation r
+        JOIN T_Seat s ON r.seat_code = s.seat_code
+    </select>
+    <insert id="insertSeatReservation" parameterType="com.novacinema.SeatReservationId.model.dto.SeatReservationDTO">
+        INSERT INTO T_SeatReservation (
+        reservation_id,
+        schedule_num,
+        seat_code,
+        reserved,
+        reserved_at
+        ) VALUES (
+        #{reservationId},
+        #{scheduleNum},
+        #{seatCode},
+        #{reserved},
+        #{reservedAt}
+        )
+    </insert>
+
+
 
 </mapper>

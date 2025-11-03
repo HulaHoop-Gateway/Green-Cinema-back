@@ -56,6 +56,7 @@
             </association>
         </association>
 
+
         <association property="userDTO" javaType="com.novacinema.user.model.dto.UserDTO">
             <result property="memberCode" column="member_code"/>
             <result property="memberName" column="member_name"/>
@@ -180,7 +181,6 @@
         #{scheduleNum}
         )
     </insert>
-
     <select id="selectByUserCode" resultMap="reservationInfoDetailResultMap">
         SELECT
         r.reservation_num,
@@ -217,7 +217,5 @@
         JOIN T_Seat seat ON r.seat_number = seat.seat_code
         WHERE r.member_code = #{userCode}
     </select>
-
-
 
 </mapper>

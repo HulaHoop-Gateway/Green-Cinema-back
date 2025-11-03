@@ -1,11 +1,8 @@
 package com.novacinema.reservation.controller;
 
-import com.novacinema.cinemaFranchise.model.dto.CinemaFranchiseDTO;
-import com.novacinema.cinemaFranchise.model.service.CinemaFranchiseService;
 import com.novacinema.reservation.model.dto.ReservationDTO;
 import com.novacinema.reservation.model.service.ReservationService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,7 +23,7 @@ public class ReservationController {
     }
     @GetMapping("/history")
     public ResponseEntity<List<ReservationDTO>> getReservationHistory(@RequestParam int userCode) {
-        List<ReservationDTO> reservationList = reservationService.findByUserCode(userCode);
+        List<ReservationDTO> reservationList = reservationService.getAllReservations();
         return ResponseEntity.ok(reservationList);
     }
 

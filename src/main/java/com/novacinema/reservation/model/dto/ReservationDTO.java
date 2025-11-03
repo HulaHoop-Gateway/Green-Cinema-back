@@ -1,10 +1,7 @@
 package com.novacinema.reservation.model.dto;
 
-import com.novacinema.cinemaFranchise.model.dto.CinemaFranchiseDTO;
-import com.novacinema.info.model.dto.InfoDTO;
 import com.novacinema.schedule.model.dto.ScheduleDTO;
 import com.novacinema.seat.model.dto.SeatDTO;
-import com.novacinema.theater.model.dto.TheaterDTO;
 import com.novacinema.user.model.dto.UserDTO;
 
 import java.time.LocalDateTime;

@@ -1,6 +1,9 @@
-package com.novacinema.SeatReservationId;
+package com.novacinema.SeatReservationId.model.dao;
 
+import com.novacinema.SeatReservationId.model.dto.SeatReservationDTO;
+import com.novacinema.seat.model.dto.SeatDTO;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 @Mapper
@@ -17,4 +20,13 @@ public interface SeatReservationMapper {
 
     // 예약 상태 변경 (예매 취소 등)
     int changeReservationStatus(int reservationId, boolean reserved);
+
+    List<SeatReservationDTO> getAllReservations();
+    List<SeatDTO> getAvailableSeatsBySchedule(@Param("scheduleNum") int scheduleNum);
+
+    void insertSeatReservation(SeatReservationDTO seatReservationDTO);
+
+    ;
+
+
 }

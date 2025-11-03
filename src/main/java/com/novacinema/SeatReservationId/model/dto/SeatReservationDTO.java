@@ -1,4 +1,6 @@
-package com.novacinema.SeatReservationId;
+package com.novacinema.SeatReservationId.model.dto;
+
+import com.novacinema.seat.model.dto.SeatDTO;
 
 import java.sql.Timestamp;
 
@@ -9,14 +11,17 @@ public class SeatReservationDTO {
     private boolean reserved;      // 예약 여부
     private Timestamp reservedAt;  // 예약 시간
 
+    private SeatDTO seatInfo;
+
     public SeatReservationDTO(){}
 
-    public SeatReservationDTO(int reservationId, int scheduleNum, int seatCode, boolean reserved, Timestamp reservedAt) {
+    public SeatReservationDTO(int reservationId, int scheduleNum, int seatCode, boolean reserved, Timestamp reservedAt, SeatDTO seatInfo) {
         this.reservationId = reservationId;
         this.scheduleNum = scheduleNum;
         this.seatCode = seatCode;
         this.reserved = reserved;
         this.reservedAt = reservedAt;
+        this.seatInfo = seatInfo;
     }
 
     public int getReservationId() {
@@ -59,6 +64,14 @@ public class SeatReservationDTO {
         this.reservedAt = reservedAt;
     }
 
+    public SeatDTO getSeatInfo() {
+        return seatInfo;
+    }
+
+    public void setSeatInfo(SeatDTO seatInfo) {
+        this.seatInfo = seatInfo;
+    }
+
     @Override
     public String toString() {
         return "SeatReservationDTO{" +
@@ -67,6 +80,7 @@ public class SeatReservationDTO {
                 ", seatCode=" + seatCode +
                 ", reserved=" + reserved +
                 ", reservedAt=" + reservedAt +
+                ", seatInfo=" + seatInfo +
                 '}';
     }
 }

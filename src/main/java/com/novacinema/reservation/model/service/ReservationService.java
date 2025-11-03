@@ -21,8 +21,4 @@ public class ReservationService {
         return result > 0;
     }
 
-    public List<ReservationDTO> findByUserCode(int userCode) {
-        return reservationMapper.selectByUserCode(userCode);
-    }
-
 }

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>BoardTest</title>
+</head>
+<body>
+  <h1>CinemaTest</h1>
+  <h3>home</h3>
+  <button onclick="location.href='/cinemafranchise/list'">/cinemafranchise/list</button>
+  <button onclick="location.href='/theater/list'">/theater/list</button>
+  <button onclick="location.href='/seat/list'">/seat/list</button>
+  <button onclick="location.href='/schedule/list'">/schedule/list</button>
+  <button onclick="location.href='/info/list'">/info/list</button>
+  <button onclick="location.href='/user/list'">/user/list</button>
+  <button onclick="location.href='/reservation/list'">/reservation/list</button>
+  <button onclick="location.href='/seatReservation/list'">/seatReservation/list</button>
+    <br>
+
+  <select id="scheduleSelect">
+      <option value="4001">4001</option>
+      <option value="4002">4002</option>
+      <option value="4003">4003</option>
+      <option value="4004">4004</option>
+      <option value="4005">4005</option>
+  </select>
+  <button onclick="loadAvailableSeats()">조회</button>
+
+  <ul id="seatList"></ul>
+
+  <script>
+      function loadAvailableSeats() {
+          const scheduleNum = document.getElementById('scheduleSelect').value;
+          fetch(`http://localhost:8082/seatReservation/available?scheduleNum=${scheduleNum}`)
+              .then(response => response.json())
+              .then(data => {
+                  const seatList = document.getElementById('seatList');
+                  seatList.innerHTML = '';
+                  data.forEach(seat => {
+                      const li = document.createElement('li');
+                      li.textContent = seat;
+                      seatList.appendChild(li);
+                  });
+              })
+              .catch(error => {
+                  console.error('좌석 조회 실패:', error);
+              });
+      }
+  </script>
+
+
+
+</body>
+</html>
