@@ -1,4 +1,4 @@
-package com.novacinema.reservationInsert.service;
+package com.novacinema.reservationCRUD.service;
 
 import com.novacinema.SeatReservationId.model.dao.SeatReservationMapper;
 import com.novacinema.SeatReservationId.model.dto.SeatReservationDTO;
@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 @Service
-public class ReservationInsertService {
+public class ReservationCRUDService {
     @Autowired
     private ReservationMapper reservationMapper;
 
@@ -24,5 +24,23 @@ public class ReservationInsertService {
         seatReservationMapper.insertSeatReservation(seatReservationDTO);
 
     }
+
+
+
+    @Transactional
+    public boolean updateReservationState(int reservationNum) {
+        String newState = "취소됨"; // 상태는 내부에서 고정하거나 외부에서 받도록 선택 가능
+
+        int updatedReservation = reservationMapper.updateReservationState(reservationNum, newState);
+        int updatedSeat = seatReservationMapper.updateSeatReservedFlag(reservationNum, false);
+
+        System.out.println("예약번호: " + reservationNum);
+        System.out.println("예매 상태 수정 결과: " + updatedReservation);
+        System.out.println("좌석 예약 상태 수정 결과: " + updatedSeat);
+
+        return updatedReservation > 0 && updatedSeat > 0;
+    }
+
+
 
 }

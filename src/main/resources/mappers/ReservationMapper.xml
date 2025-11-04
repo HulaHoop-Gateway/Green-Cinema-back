@@ -217,5 +217,11 @@
         JOIN T_Seat seat ON r.seat_number = seat.seat_code
         WHERE r.member_code = #{userCode}
     </select>
+    <update id="updateReservationState">
+        UPDATE T_ReservationInfo
+        SET state = #{state}
+        WHERE reservation_num = #{reservationNum}
+    </update>
+
 
 </mapper>
