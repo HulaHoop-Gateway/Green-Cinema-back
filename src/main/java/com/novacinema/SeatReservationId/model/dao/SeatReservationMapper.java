@@ -26,7 +26,9 @@ public interface SeatReservationMapper {
 
     void insertSeatReservation(SeatReservationDTO seatReservationDTO);
 
-    ;
+    int updateSeatReservedFlag(@Param("reservationId") int reservationId,
+                               @Param("reserved") boolean reserved);
+
 
 
 }

@@ -32,8 +32,15 @@
     <select id="getAvailableSeatsBySchedule" resultMap="AvailableSeatResultMap">
         SELECT s.seat_code, s.seat_type, s.seat_real_num, s.sale, s.screening_num
         FROM T_Seat s
-        LEFT JOIN T_SeatReservation r
-        ON s.seat_code = r.seat_code AND r.schedule_num = #{scheduleNum}
+        LEFT JOIN (
+        SELECT r1.*
+        FROM T_SeatReservation r1
+        INNER JOIN (
+        SELECT seat_code, schedule_num, MAX(reserved_at) AS latest_time
+        FROM T_SeatReservation
+        GROUP BY seat_code, schedule_num
+        ) r2 ON r1.seat_code = r2.seat_code AND r1.schedule_num = r2.schedule_num AND r1.reserved_at = r2.latest_time
+        ) r ON s.seat_code = r.seat_code AND r.schedule_num = #{scheduleNum}
         WHERE s.screening_num = (
         SELECT screening_num
         FROM T_Schedule
@@ -41,10 +48,6 @@
         )
         AND (r.reserved IS NULL OR r.reserved = 0)
     </select>
-
-
-
-
     <select id="getAllReservations" resultMap="SeatReservationResultMap">
         SELECT r.*, s.seat_real_num, s.seat_type, s.sale, s.screening_num
         FROM T_SeatReservation r
@@ -65,6 +68,12 @@
         #{reservedAt}
         )
     </insert>
+    <update id="updateSeatReservedFlag">
+        UPDATE T_SeatReservation
+        SET reserved = #{reserved}
+        WHERE reservation_id = #{reservationId}
+    </update>
+
 
 
 

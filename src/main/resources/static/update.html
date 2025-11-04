@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <title>예매 취소</title>
+</head>
+<body>
+<h1>🎫 예매 취소 페이지</h1>
+
+<!-- 예매번호 입력 -->
+<label for="reservationNum">예약번호:</label>
+<input type="number" id="reservationNum" placeholder="예매번호 입력" />
+<br><br>
+
+<!-- 취소 버튼 -->
+<button onclick="cancelReservation()">예매 취소</button>
+
+<script>
+    function cancelReservation() {
+        const reservationNum = document.getElementById('reservationNum').value;
+
+        if (!reservationNum) {
+            alert('예약번호를 입력해주세요.');
+            return;
+        }
+
+        // 숫자 파라미터로 전달
+        fetch(`http://localhost:8082/api/reservations/update?reservationNum=${reservationNum}`, {
+            method: 'POST'
+        })
+            .then(response => response.text())
+            .then(text => {
+                console.log('서버 응답:', text);
+                if (text.includes('성공')) {
+                    alert('예매가 성공적으로 취소되었습니다.');
+                } else {
+                    alert('예매 취소 실패: ' + text);
+                }
+            })
+            .catch(error => {
+                console.error('예매 취소 요청 실패:', error);
+                alert('서버 오류로 인해 취소에 실패했습니다.');
+            });
+    }
+</script>
+</body>
+</html>
