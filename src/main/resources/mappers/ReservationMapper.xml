@@ -120,5 +120,56 @@
         JOIN T_Theater th ON sc.screening_num = th.screening_num
         JOIN T_CinemaFranchise cf ON th.branch_num = cf.branch_num
     </select>
+    <!-- 🔍 특정 회원의 예약 조회 -->
+    <select id="selectReservationsByMemberCode" parameterType="int" resultMap="reservationInfoDetailResultMap">
+        SELECT
+        r.reservation_num,
+        r.seat_number,
+        r.payment_time,
+        r.state,
+        r.member_code,
+        r.schedule_num,
+
+        s.seat_code,
+        s.seat_type,
+        s.price,
+        s.screening_num,
+        s.is_aisle,
+        s.row_label,
+        s.col_num,
+
+        m.member_code,
+        m.member_name,
+        m.id,
+        m.password,
+        m.phone_number,
+
+        sc.schedule_num,
+        sc.screening_date,
+        sc.screening_num,
+        sc.movie_num,
+
+        i.movie_num,
+        i.movie_title,
+        i.running_time,
+        i.audience_rating,
+
+        th.screening_num AS th_screening_num,
+        th.screening_number,
+        th.branch_num,
+
+        cf.branch_name,
+        cf.address
+
+        FROM T_ReservationInfo r
+        JOIN T_Seat s ON r.seat_number = s.seat_code
+        JOIN T_MemberInfo m ON r.member_code = m.member_code
+        JOIN T_Schedule sc ON r.schedule_num = sc.schedule_num
+        JOIN T_Info i ON sc.movie_num = i.movie_num
+        JOIN T_Theater th ON sc.screening_num = th.screening_num
+        JOIN T_CinemaFranchise cf ON th.branch_num = cf.branch_num
+        WHERE r.member_code = #{memberCode}
+    </select>
+
 
 </mapper>
