@@ -3,14 +3,15 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.novacinema.reservation.model.dao.ReservationMapper">
-    <!-- 영화관 지점 -->
+
+    <!-- 🎬 영화관 지점 -->
     <resultMap id="cinemaFranchiseResultMap" type="com.novacinema.cinemaFranchise.model.dto.CinemaFranchiseDTO">
         <id property="branchNum" column="branch_num"/>
         <result property="branchName" column="branch_name"/>
         <result property="address" column="address"/>
     </resultMap>
 
-    <!-- 상영관 -->
+    <!-- 🎥 상영관 -->
     <resultMap id="theaterResultMap" type="com.novacinema.theater.model.dto.TheaterDTO">
         <id property="screeningNum" column="th_screening_num"/>
         <result property="screeningNumber" column="screening_number"/>
@@ -18,7 +19,7 @@
         <association property="cinemaFranchisedto" resultMap="cinemaFranchiseResultMap"/>
     </resultMap>
 
-    <!-- 영화 정보 -->
+    <!-- 🎞️ 영화 정보 -->
     <resultMap id="infoResultMap" type="com.novacinema.info.model.dto.InfoDTO">
         <id property="movieNum" column="movie_num"/>
         <result property="movieTitle" column="movie_title"/>
@@ -26,16 +27,17 @@
         <result property="audienceRating" column="audience_rating"/>
     </resultMap>
 
-    <!-- 상영 일정 정보 -->
+    <!-- 📅 상영 일정 정보 -->
     <resultMap id="scheduleResultMap" type="com.novacinema.schedule.model.dto.ScheduleDTO">
         <id property="scheduleNum" column="schedule_num"/>
         <result property="screeningDate" column="screening_date"/>
         <result property="screeningNum" column="screening_num"/>
         <result property="movieNum" column="movie_num"/>
         <association property="movieInfo" resultMap="infoResultMap"/>
+        <association property="theaterInfo" resultMap="theaterResultMap"/>
     </resultMap>
 
-    <!-- 좌석 정보 -->
+    <!-- 🎫 좌석 정보 -->
     <resultMap id="seatResultMap" type="com.novacinema.seat.model.dto.SeatDTO">
         <id property="seatCode" column="seat_code"/>
         <result property="seatType" column="seat_type"/>
@@ -47,7 +49,7 @@
         <result property="colNum" column="col_num"/>
     </resultMap>
 
-    <!-- 회원 정보 -->
+    <!-- 🙋 회원 정보 -->
     <resultMap id="userResultMap" type="com.novacinema.user.model.dto.UserDTO">
         <id property="memberCode" column="member_code"/>
         <result property="memberName" column="member_name"/>
@@ -56,7 +58,7 @@
         <result property="phoneNumber" column="phone_number"/>
     </resultMap>
 
-    <!-- 예약 정보 -->
+    <!-- 📦 예약 정보 -->
     <resultMap id="reservationInfoDetailResultMap" type="com.novacinema.reservation.model.dto.ReservationDTO">
         <id property="reservationNum" column="reservation_num"/>
         <result property="seatNumber" column="seat_number"/>
@@ -69,6 +71,7 @@
         <association property="scheduleDTO" resultMap="scheduleResultMap"/>
     </resultMap>
 
+    <!-- 🔍 예약 전체 조회 -->
     <select id="selectAllReservations" resultMap="reservationInfoDetailResultMap">
         SELECT
         r.reservation_num,
@@ -109,7 +112,6 @@
         cf.branch_name,
         cf.address
 
-
         FROM T_ReservationInfo r
         JOIN T_Seat s ON r.seat_number = s.seat_code
         JOIN T_MemberInfo m ON r.member_code = m.member_code
@@ -117,7 +119,6 @@
         JOIN T_Info i ON sc.movie_num = i.movie_num
         JOIN T_Theater th ON sc.screening_num = th.screening_num
         JOIN T_CinemaFranchise cf ON th.branch_num = cf.branch_num
-
     </select>
 
 </mapper>
