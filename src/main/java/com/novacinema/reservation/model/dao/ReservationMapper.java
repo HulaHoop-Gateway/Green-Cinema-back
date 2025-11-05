@@ -9,6 +9,7 @@ import java.util.List;
 @Mapper
 public interface ReservationMapper {
     List<ReservationDTO> selectAllReservations();
+    List<ReservationDTO> selectReservationsByMemberCode();
     int insertReservation(ReservationDTO reservationDTO);
 
 
