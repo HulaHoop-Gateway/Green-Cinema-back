@@ -10,49 +10,45 @@
         <result property="seatCode" column="seat_code"/>
         <result property="reserved" column="reserved"/>
         <result property="reservedAt" column="reserved_at"/>
-
-        <association property="seatInfo" javaType="com.novacinema.seat.model.dto.SeatDTO">
-            <id property="seatCode" column="seat_code"/>
-            <result property="seatRealNum" column="seat_real_num"/>
-            <result property="seatType" column="seat_type"/>
-            <result property="sale" column="sale"/>
-            <result property="screeningNum" column="screening_num"/>
-        </association>
     </resultMap>
     <resultMap id="AvailableSeatResultMap" type="com.novacinema.seat.model.dto.SeatDTO">
         <id property="seatCode" column="seat_code"/>
         <result property="seatType" column="seat_type"/>
-        <result property="seatRealNum" column="seat_real_num"/>
-        <result property="sale" column="sale"/>
         <result property="screeningNum" column="screening_num"/>
+        <result property="sale" column="sale"/>
+        <result property="seatRealNum" column="seat_real_num"/>
     </resultMap>
 
-
-
-    <select id="getAvailableSeatsBySchedule" resultMap="AvailableSeatResultMap">
-        SELECT s.seat_code, s.seat_type, s.seat_real_num, s.sale, s.screening_num
-        FROM T_Seat s
-        LEFT JOIN (
-        SELECT r1.*
-        FROM T_SeatReservation r1
-        INNER JOIN (
-        SELECT seat_code, schedule_num, MAX(reserved_at) AS latest_time
-        FROM T_SeatReservation
-        GROUP BY seat_code, schedule_num
-        ) r2 ON r1.seat_code = r2.seat_code AND r1.schedule_num = r2.schedule_num AND r1.reserved_at = r2.latest_time
-        ) r ON s.seat_code = r.seat_code AND r.schedule_num = #{scheduleNum}
-        WHERE s.screening_num = (
-        SELECT screening_num
-        FROM T_Schedule
-        WHERE schedule_num = #{scheduleNum}
-        )
-        AND (r.reserved IS NULL OR r.reserved = 0)
-    </select>
     <select id="getAllReservations" resultMap="SeatReservationResultMap">
-        SELECT r.*, s.seat_real_num, s.seat_type, s.sale, s.screening_num
-        FROM T_SeatReservation r
-        JOIN T_Seat s ON r.seat_code = s.seat_code
+        SELECT
+        reservation_id,
+        schedule_num,
+        seat_code,
+        reserved,
+        reserved_at
+        FROM T_SeatReservation
     </select>
+    <select id="getAvailableSeatsBySchedule" resultMap="AvailableSeatResultMap">
+    SELECT
+    seat_code,
+    seat_type,
+    screening_num,
+    sale,
+    seat_real_num
+    FROM T_Seat
+    WHERE screening_num = (
+    SELECT screening_num
+    FROM T_Schedule
+    WHERE schedule_num = #{scheduleNum}
+    )
+    AND seat_code NOT IN (
+    SELECT seat_code
+    FROM T_SeatReservation
+    WHERE schedule_num = #{scheduleNum}
+    AND reserved = TRUE
+    )
+    </select>
+
     <insert id="insertSeatReservation" parameterType="com.novacinema.SeatReservationId.model.dto.SeatReservationDTO">
         INSERT INTO T_SeatReservation (
         reservation_id,
@@ -68,7 +64,8 @@
         #{reservedAt}
         )
     </insert>
-    <update id="updateSeatReservedFlag">
+
+    <update id="updateSeatReservedFlag" parameterType="com.novacinema.SeatReservationId.model.dto.SeatReservationDTO">
         UPDATE T_SeatReservation
         SET reserved = #{reserved}
         WHERE reservation_id = #{reservationId}

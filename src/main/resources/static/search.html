@@ -17,7 +17,6 @@
   <button onclick="loadAvailableSeats()">조회</button>
 
   <ul id="seatList"></ul>
-
   <script>
       function loadAvailableSeats() {
           const scheduleNum = document.getElementById('scheduleSelect').value;
@@ -28,7 +27,7 @@
                   seatList.innerHTML = '';
                   data.forEach(seat => {
                       const li = document.createElement('li');
-                      li.textContent = `좌석번호: ${seat.seatRealNum} / 유형: ${seat.seatType} / 가격: ${seat.sale}원`;
+                      li.textContent = `좌석번호: ${seat.seatCode} / 유형: ${seat.seatType}`;
                       seatList.appendChild(li);
                   });
               })
@@ -37,6 +36,7 @@
               });
       }
   </script>
+
 
 
 

@@ -1,34 +1,39 @@
 package com.novacinema.SeatReservationId.model.dto;
 
+import com.novacinema.schedule.model.dto.ScheduleDTO;
 import com.novacinema.seat.model.dto.SeatDTO;
 
 import java.sql.Timestamp;
 
 public class SeatReservationDTO {
-    private int reservationId;     // 예매 고유 ID
-    private int scheduleNum;       // 상영 일정 번호
-    private int seatCode;          // 좌석 코드
-    private boolean reserved;      // 예약 여부
-    private Timestamp reservedAt;  // 예약 시간
+    private String reservationId;     // 예매 고유 ID
+    private int scheduleNum;          // 상영 일정 번호
+    private long seatCode;            // 좌석 코드
+    private boolean reserved;         // 예약 여부
+    private Timestamp reservedAt;     // 예약 시간
 
-    private SeatDTO seatInfo;
 
-    public SeatReservationDTO(){}
+    private ScheduleDTO scheduleDTO;
+    private SeatDTO seatDTO;
 
-    public SeatReservationDTO(int reservationId, int scheduleNum, int seatCode, boolean reserved, Timestamp reservedAt, SeatDTO seatInfo) {
+    public SeatReservationDTO() {
+    }
+
+    public SeatReservationDTO(String reservationId, int scheduleNum, long seatCode, boolean reserved, Timestamp reservedAt, ScheduleDTO scheduleDTO, SeatDTO seatDTO) {
         this.reservationId = reservationId;
         this.scheduleNum = scheduleNum;
         this.seatCode = seatCode;
         this.reserved = reserved;
         this.reservedAt = reservedAt;
-        this.seatInfo = seatInfo;
+        this.scheduleDTO = scheduleDTO;
+        this.seatDTO = seatDTO;
     }
 
-    public int getReservationId() {
+    public String getReservationId() {
         return reservationId;
     }
 
-    public void setReservationId(int reservationId) {
+    public void setReservationId(String reservationId) {
         this.reservationId = reservationId;
     }
 
@@ -40,11 +45,11 @@ public class SeatReservationDTO {
         this.scheduleNum = scheduleNum;
     }
 
-    public int getSeatCode() {
+    public long getSeatCode() {
         return seatCode;
     }
 
-    public void setSeatCode(int seatCode) {
+    public void setSeatCode(long seatCode) {
         this.seatCode = seatCode;
     }
 
@@ -64,23 +69,32 @@ public class SeatReservationDTO {
         this.reservedAt = reservedAt;
     }
 
-    public SeatDTO getSeatInfo() {
-        return seatInfo;
+    public ScheduleDTO getScheduleDTO() {
+        return scheduleDTO;
     }
 
-    public void setSeatInfo(SeatDTO seatInfo) {
-        this.seatInfo = seatInfo;
+    public void setScheduleDTO(ScheduleDTO scheduleDTO) {
+        this.scheduleDTO = scheduleDTO;
+    }
+
+    public SeatDTO getSeatDTO() {
+        return seatDTO;
+    }
+
+    public void setSeatDTO(SeatDTO seatDTO) {
+        this.seatDTO = seatDTO;
     }
 
     @Override
     public String toString() {
         return "SeatReservationDTO{" +
-                "reservationId=" + reservationId +
+                "reservationId='" + reservationId + '\'' +
                 ", scheduleNum=" + scheduleNum +
                 ", seatCode=" + seatCode +
                 ", reserved=" + reserved +
                 ", reservedAt=" + reservedAt +
-                ", seatInfo=" + seatInfo +
+                ", scheduleDTO=" + scheduleDTO +
+                ", seatDTO=" + seatDTO +
                 '}';
     }
 }

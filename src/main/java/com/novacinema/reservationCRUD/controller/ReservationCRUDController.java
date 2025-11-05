@@ -34,10 +34,7 @@ public class ReservationCRUDController {
     @PostMapping("/insert2")
     public ResponseEntity<String> insertReservation2(@RequestBody ReservationRequest request) {
         try {
-            reservationCRUDService.reserveSeatAndInsertReservation(
-                    request.getReservationDTO(),
-                    request.getSeatReservationDTO()
-            );
+            reservationCRUDService.reserveSeatAndInsertReservation(request.getReservationDTO(), request.getSeatReservationDTO());
             return ResponseEntity.ok("예매 및 좌석 예약이 완료되었습니다.");
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body("예매 실패: " + e.getMessage());

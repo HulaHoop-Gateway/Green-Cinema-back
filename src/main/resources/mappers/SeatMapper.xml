@@ -7,17 +7,17 @@
     <resultMap id="seatResultMap" type="com.novacinema.seat.model.dto.SeatDTO">
         <id property="seatCode" column="seat_code"/>
         <result property="seatType" column="seat_type"/>
-        <result property="seatRealNum" column="seat_real_num"/>
-        <result property="sale" column="sale"/>
+        <result property="price" column="price"/>
+        <result property="isAisle" column="is_aisle"/>
+        <result property="rowLabel" column="row_label"/>
+        <result property="colNum" column="col_num"/>
         <result property="screeningNum" column="screening_num"/>
 
         <!-- 좌석 기준 상영관 정보 -->
         <association property="theaterDTO" javaType="com.novacinema.theater.model.dto.TheaterDTO">
-            <id property="screeningNum" column="screening_num"/>
             <result property="screeningNumber" column="screening_number"/>
             <result property="branchNum" column="branch_num"/>
             <association property="cinemaFranchisedto" javaType="com.novacinema.cinemaFranchise.model.dto.CinemaFranchiseDTO">
-                <id property="branchNum" column="branch_num"/>
                 <result property="branchName" column="branch_name"/>
                 <result property="address" column="address"/>
             </association>
@@ -30,21 +30,16 @@
             <result property="screeningNum" column="schedule_screening_num"/>
             <result property="movieNum" column="movie_num"/>
 
-            <!-- 영화 정보 -->
             <association property="movieInfo" javaType="com.novacinema.info.model.dto.InfoDTO">
-                <id property="movieNum" column="movie_num"/>
                 <result property="movieTitle" column="movie_title"/>
                 <result property="runningTime" column="running_time"/>
                 <result property="audienceRating" column="audience_rating"/>
             </association>
 
-            <!-- 스케줄 기준 상영관 정보 -->
             <association property="theaterInfo" javaType="com.novacinema.theater.model.dto.TheaterDTO">
-                <id property="screeningNum" column="schedule_screening_num"/>
                 <result property="screeningNumber" column="schedule_screening_number"/>
                 <result property="branchNum" column="schedule_branch_num"/>
                 <association property="cinemaFranchisedto" javaType="com.novacinema.cinemaFranchise.model.dto.CinemaFranchiseDTO">
-                    <id property="branchNum" column="schedule_branch_num"/>
                     <result property="branchName" column="schedule_branch_name"/>
                     <result property="address" column="schedule_address"/>
                 </association>
@@ -52,12 +47,15 @@
         </association>
     </resultMap>
 
+    <!-- 좌석 전체 조회 -->
     <select id="selectAllSeats" resultMap="seatResultMap">
         SELECT
         s.seat_code,
         s.seat_type,
-        s.seat_real_num,
-        s.sale,
+        s.row_label,
+        s.col_num,
+        s.price,
+        s.is_aisle,
         s.screening_num,
 
         -- 좌석 기준 상영관 정보
@@ -92,12 +90,16 @@
         LEFT JOIN T_CinemaFranchise ff ON tt.branch_num = ff.branch_num
         LEFT JOIN T_Info i ON sch.movie_num = i.movie_num
     </select>
+
+    <!-- 특정 스케줄 기준 좌석 조회 -->
     <select id="selectAllSeatsBySchedule" resultMap="seatResultMap">
         SELECT
         s.seat_code,
         s.seat_type,
-        s.seat_real_num,
-        s.sale,
+        s.row_label,
+        s.col_num,
+        s.price,
+        s.is_aisle,
         s.screening_num,
 
         -- 좌석 기준 상영관 정보
@@ -134,8 +136,5 @@
 
         WHERE sch.schedule_num = #{scheduleNum}
     </select>
-
-
-
 
 </mapper>
