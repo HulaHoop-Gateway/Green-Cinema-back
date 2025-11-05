@@ -12,19 +12,29 @@ public class SeatDTO {
     private String seatRealNum;     // 실제 좌석 번호 (예: A1, B2)
     private BigDecimal sale;        // 가격
     private int screeningNum;       // 상영관 번호 (FK)
+    private int price;
+    private int isAisle;
+    private String rowLabel;
+    private int colNum;
+
+
     private TheaterDTO theaterDTO;
-    private ScheduleDTO ScheduleDTO;
+    private ScheduleDTO scheduleDTO;
     public SeatDTO() {
     }
 
-    public SeatDTO(int seatCode, String seatType, String seatRealNum, BigDecimal sale, int screeningNum, TheaterDTO theaterDTO, ScheduleDTO scheduleDTO) {
+    public SeatDTO(int seatCode, String seatType, String seatRealNum, BigDecimal sale, int screeningNum, int price, int isAisle, String rowLabel, int colNum, TheaterDTO theaterDTO, ScheduleDTO scheduleDTO) {
         this.seatCode = seatCode;
         this.seatType = seatType;
         this.seatRealNum = seatRealNum;
         this.sale = sale;
         this.screeningNum = screeningNum;
+        this.price = price;
+        this.isAisle = isAisle;
+        this.rowLabel = rowLabel;
+        this.colNum = colNum;
         this.theaterDTO = theaterDTO;
-        ScheduleDTO = scheduleDTO;
+        this.scheduleDTO = scheduleDTO;
     }
 
     public int getSeatCode() {
@@ -67,6 +77,38 @@ public class SeatDTO {
         this.screeningNum = screeningNum;
     }
 
+    public int getPrice() {
+        return price;
+    }
+
+    public void setPrice(int price) {
+        this.price = price;
+    }
+
+    public int getIsAisle() {
+        return isAisle;
+    }
+
+    public void setIsAisle(int isAisle) {
+        this.isAisle = isAisle;
+    }
+
+    public String getRowLabel() {
+        return rowLabel;
+    }
+
+    public void setRowLabel(String rowLabel) {
+        this.rowLabel = rowLabel;
+    }
+
+    public int getColNum() {
+        return colNum;
+    }
+
+    public void setColNum(int colNum) {
+        this.colNum = colNum;
+    }
+
     public TheaterDTO getTheaterDTO() {
         return theaterDTO;
     }
@@ -76,11 +118,11 @@ public class SeatDTO {
     }
 
     public ScheduleDTO getScheduleDTO() {
-        return ScheduleDTO;
+        return scheduleDTO;
     }
 
     public void setScheduleDTO(ScheduleDTO scheduleDTO) {
-        ScheduleDTO = scheduleDTO;
+        this.scheduleDTO = scheduleDTO;
     }
 
     @Override
@@ -91,8 +133,12 @@ public class SeatDTO {
                 ", seatRealNum='" + seatRealNum + '\'' +
                 ", sale=" + sale +
                 ", screeningNum=" + screeningNum +
+                ", price=" + price +
+                ", isAisle=" + isAisle +
+                ", rowLabel='" + rowLabel + '\'' +
+                ", colNum=" + colNum +
                 ", theaterDTO=" + theaterDTO +
-                ", ScheduleDTO=" + ScheduleDTO +
+                ", scheduleDTO=" + scheduleDTO +
                 '}';
     }
 }

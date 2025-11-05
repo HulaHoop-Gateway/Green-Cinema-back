@@ -7,19 +7,21 @@ import com.novacinema.user.model.dto.UserDTO;
 import java.time.LocalDateTime;
 
 public class ReservationDTO {
-    private int reservationNum;       // 예매 고유번호
-    private int seatNumber;           // 좌석 코드
-    private LocalDateTime paymentTime;// 결제 시간
-    private String state;             // 예약 상태
-    private int memberCode;           // 회원 코드
-    private int scheduleNum;          // 상영 일정 코드
+    private String reservationNum;       // 예매 고유번호
+    private long seatNumber;             // 좌석 코드
+    private LocalDateTime paymentTime;   // 결제 시간
+    private String state;                // 예약 상태
+    private int memberCode;              // 회원 코드
+    private int scheduleNum;             // 상영 일정 코드
 
     private SeatDTO seatDTO;
     private UserDTO userDTO;
     private ScheduleDTO scheduleDTO;
 
-    public ReservationDTO(){}
-    public ReservationDTO(int reservationNum, int seatNumber, LocalDateTime paymentTime, String state, int memberCode, int scheduleNum, SeatDTO seatDTO, UserDTO userDTO, ScheduleDTO scheduleDTO) {
+    public ReservationDTO() {
+    }
+
+    public ReservationDTO(String reservationNum, long seatNumber, LocalDateTime paymentTime, String state, int memberCode, int scheduleNum, SeatDTO seatDTO, UserDTO userDTO, ScheduleDTO scheduleDTO) {
         this.reservationNum = reservationNum;
         this.seatNumber = seatNumber;
         this.paymentTime = paymentTime;
@@ -31,19 +33,19 @@ public class ReservationDTO {
         this.scheduleDTO = scheduleDTO;
     }
 
-    public int getReservationNum() {
+    public String getReservationNum() {
         return reservationNum;
     }
 
-    public void setReservationNum(int reservationNum) {
+    public void setReservationNum(String reservationNum) {
         this.reservationNum = reservationNum;
     }
 
-    public int getSeatNumber() {
+    public long getSeatNumber() {
         return seatNumber;
     }
 
-    public void setSeatNumber(int seatNumber) {
+    public void setSeatNumber(long seatNumber) {
         this.seatNumber = seatNumber;
     }
 
@@ -106,7 +108,7 @@ public class ReservationDTO {
     @Override
     public String toString() {
         return "ReservationDTO{" +
-                "reservationNum=" + reservationNum +
+                "reservationNum='" + reservationNum + '\'' +
                 ", seatNumber=" + seatNumber +
                 ", paymentTime=" + paymentTime +
                 ", state='" + state + '\'' +
