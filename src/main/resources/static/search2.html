@@ -3,23 +3,32 @@
 <head>
     <meta charset="UTF-8" />
     <title>예매 및 좌석 예약 정보</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; line-height: 1.6; }
+        .card { border: 1px solid #ccc; padding: 12px; margin-bottom: 16px; border-radius: 6px; background: #f9f9f9; }
+        h2 { margin-top: 40px; }
+    </style>
 </head>
 <body>
 <h1>🎫 예매 정보 + 💺 좌석 예약 정보</h1>
 
-<!-- 버튼 1: 예매 정보 조회 -->
+<!-- 버튼 -->
 <button onclick="loadReservations()">📋 예매 정보 조회</button>
-
-<!-- 버튼 2: 좌석 예약 정보 조회 -->
 <button onclick="loadSeatReservations()">💺 좌석 예약 정보 조회</button>
 
 <!-- 출력 영역 -->
-<div id="reservationSection" style="margin-top: 30px;"></div>
+<div id="reservationSection"></div>
 <hr>
-<div id="seatReservationSection" style="margin-top: 30px;"></div>
+<div id="seatReservationSection"></div>
 
 <script>
+    function clearAllSections() {
+        document.getElementById('reservationSection').innerHTML = '';
+        document.getElementById('seatReservationSection').innerHTML = '';
+    }
+
     function loadReservations() {
+        clearAllSections(); // 🔄 모든 영역 초기화
         fetch('http://localhost:8082/reservation/list')
             .then(res => res.json())
             .then(data => renderReservations(data))
@@ -30,6 +39,7 @@
     }
 
     function loadSeatReservations() {
+        clearAllSections(); // 🔄 모든 영역 초기화
         fetch('http://localhost:8082/seatReservation/list')
             .then(res => res.json())
             .then(data => renderSeatReservations(data))
@@ -41,52 +51,64 @@
 
     function renderReservations(data) {
         const container = document.getElementById('reservationSection');
-        container.innerHTML = '<h2>📋 예매 정보</h2>';
+        const title = document.createElement('h2');
+        title.textContent = '📋 예매 정보';
+        container.appendChild(title);
 
         data.forEach(r => {
             const seat = r.seatDTO || {};
-            const movie = r.scheduleDTO?.movieInfo || {};
-            const cinema = seat.theaterDTO?.cinemaFranchisedto || {};
-            const screeningDate = r.scheduleDTO?.screeningDate || '';
+            const user = r.userDTO || {};
+            const schedule = r.scheduleDTO || {};
+            const movie = schedule.movieInfo || {};
+            const theater = schedule.theaterInfo || {};
+            const cinema = theater.cinemaFranchisedto || {};
 
             const div = document.createElement('div');
-            div.style.border = '1px solid #ccc';
-            div.style.padding = '10px';
-            div.style.marginBottom = '10px';
+            div.className = 'card';
             div.innerHTML = `
-          <strong>예약번호:</strong> ${r.reservationNum}<br>
-          <strong>회원:</strong> ${r.userDTO?.memberName || ''} (${r.userDTO?.phoneNumber || ''})<br>
-          <strong>좌석:</strong> ${seat.seatRealNum} (${seat.seatType})<br>
-          <strong>가격:</strong> ${seat.sale?.toLocaleString()}원<br>
-          <strong>영화:</strong> ${movie.movieTitle || ''} (${movie.audienceRating || ''})<br>
-          <strong>상영일시:</strong> ${screeningDate}<br>
-          <strong>영화관:</strong> ${cinema.branchName || ''} / ${cinema.address || ''}<br>
-          <strong>결제시간:</strong> ${r.paymentTime}<br>
-          <strong>상태:</strong> ${r.state}
-        `;
+                <strong>예약번호:</strong> ${r.reservationNum}<br>
+                <strong>회원:</strong> ${user.memberName || ''} (${user.phoneNumber || ''})<br>
+                <strong>좌석:</strong> ${seat.rowLabel || ''}${seat.colNum || ''} (${seat.seatType || ''})<br>
+                <strong>가격:</strong> ${seat.price?.toLocaleString() || ''}원<br>
+                <strong>영화:</strong> ${movie.movieTitle || ''} (${movie.audienceRating || ''})<br>
+                <strong>상영일시:</strong> ${schedule.screeningDate || ''}<br>
+                <strong>상영관:</strong> ${theater.screeningNumber || ''}<br>
+                <strong>지점:</strong> ${cinema.branchName || ''} / ${cinema.address || ''}<br>
+                <strong>결제시간:</strong> ${r.paymentTime}<br>
+                <strong>상태:</strong> ${r.state}
+            `;
             container.appendChild(div);
         });
     }
 
     function renderSeatReservations(data) {
         const container = document.getElementById('seatReservationSection');
-        container.innerHTML = '<h2>💺 좌석 예약 정보</h2>';
+        const title = document.createElement('h2');
+        title.textContent = '💺 좌석 예약 정보';
+        container.appendChild(title);
 
         data.forEach(r => {
-            const seat = r.seatInfo || {};
+            const seat = r.seatDTO || {};
+            const schedule = r.scheduleDTO || {};
+            const movie = schedule.movieInfo || {};
+            const theater = schedule.theaterInfo || {};
+            const cinema = theater.cinemaFranchisedto || {};
+
             const div = document.createElement('div');
-            div.style.border = '1px solid #aaa';
-            div.style.padding = '10px';
-            div.style.marginBottom = '10px';
+            div.className = 'card';
             div.innerHTML = `
-          <strong>예약ID:</strong> ${r.reservationId}<br>
-          <strong>스케줄번호:</strong> ${r.scheduleNum}<br>
-          <strong>좌석코드:</strong> ${r.seatCode}<br>
-          <strong>좌석번호:</strong> ${seat.seatRealNum || ''} (${seat.seatType || ''})<br>
-          <strong>가격:</strong> ${seat.sale?.toLocaleString() || ''}원<br>
-          <strong>예약상태:</strong> ${r.reserved ? '예약됨' : '취소됨'}<br>
-          <strong>예약시간:</strong> ${r.reservedAt}
-        `;
+                <strong>예약ID:</strong> ${r.reservationId}<br>
+                <strong>스케줄번호:</strong> ${r.scheduleNum}<br>
+                <strong>좌석코드:</strong> ${r.seatCode}<br>
+                <strong>좌석:</strong> ${seat.rowLabel || ''}${seat.colNum || ''} (${seat.seatType || ''})<br>
+                <strong>가격:</strong> ${seat.price?.toLocaleString() || ''}원<br>
+                <strong>영화:</strong> ${movie.movieTitle || ''} (${movie.audienceRating || ''})<br>
+                <strong>상영일시:</strong> ${schedule.screeningDate || ''}<br>
+                <strong>상영관:</strong> ${theater.screeningNumber || ''}<br>
+                <strong>지점:</strong> ${cinema.branchName || ''} / ${cinema.address || ''}<br>
+                <strong>예약상태:</strong> ${r.reserved ? '예약됨' : '취소됨'}<br>
+                <strong>예약시간:</strong> ${r.reservedAt}
+            `;
             container.appendChild(div);
         });
     }
