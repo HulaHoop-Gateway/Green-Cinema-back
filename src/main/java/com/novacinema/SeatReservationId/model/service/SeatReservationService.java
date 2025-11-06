@@ -18,9 +18,17 @@ public class SeatReservationService {
     public List<SeatReservationDTO> getAllSeatReservations() {
         return seatReservationMapper.getAllReservations();
     }
+
+    // 예약 가능한 좌석 조회
     public List<SeatDTO> getAvailableSeats(int scheduleNum) {
         return seatReservationMapper.getAvailableSeatsBySchedule(scheduleNum);
     }
+
+    // 전체 좌석 조회 (스케줄 기준)
+    public List<SeatDTO> getAllSeatsByScheduleNum(int scheduleNum) {
+        return seatReservationMapper.getAllSeatsByScheduleNum(scheduleNum);
+    }
+
 
 
 

@@ -170,6 +170,34 @@
         JOIN T_CinemaFranchise cf ON th.branch_num = cf.branch_num
         WHERE r.member_code = #{memberCode}
     </select>
+    <insert id="insertReservation" parameterType="com.novacinema.reservation.model.dto.ReservationDTO">
+        INSERT INTO T_ReservationInfo (
+        reservation_num,
+        seat_number,
+        payment_time,
+        state,
+        member_code,
+        schedule_num
+        ) VALUES (
+        #{reservationNum},
+        #{seatNumber},
+        #{paymentTime},
+        #{state},
+        #{memberCode},
+        #{scheduleNum}
+        )
+    </insert>
+
+    <select id="findMaxReservationIdForToday" resultType="String">
+        SELECT MAX(reservation_num)
+        FROM T_ReservationInfo
+        WHERE reservation_num LIKE #{prefix}
+    </select>
+    <update id="updateReservationState" parameterType="map">
+        UPDATE T_ReservationInfo
+        SET state = #{state}
+        WHERE reservation_num = #{reservationNum}
+    </update>
 
 
 </mapper>

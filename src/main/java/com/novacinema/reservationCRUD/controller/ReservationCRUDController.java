@@ -42,9 +42,8 @@ public class ReservationCRUDController {
             return ResponseEntity.internalServerError().body("예매 처리 중 오류 발생: " + e.getMessage());
         }
     }
-
     @PostMapping("/update")
-    public ResponseEntity<String> updateReservation(@RequestParam int reservationNum) {
+    public ResponseEntity<String> updateReservation(@RequestParam String reservationNum) {
         try {
             boolean updated = reservationCRUDService.updateReservationState(reservationNum);
             if (updated) {
@@ -56,6 +55,7 @@ public class ReservationCRUDController {
             return ResponseEntity.internalServerError().body("예매 수정 중 오류 발생: " + e.getMessage());
         }
     }
+
 
 
 

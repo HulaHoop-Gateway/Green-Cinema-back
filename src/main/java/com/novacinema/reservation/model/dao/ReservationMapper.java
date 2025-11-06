@@ -13,8 +13,10 @@ public interface ReservationMapper {
     int insertReservation(ReservationDTO reservationDTO);
 
 
-    int updateReservationState(@Param("reservationNum") int reservationNum,
+    int updateReservationState(@Param("reservationNum") String reservationNum,
                                @Param("state") String newState);
 
     ReservationDTO getReservationBySeatAndSchedule(int seatNumber, int scheduleNum);
+
+    String findMaxReservationIdForToday(String s);
 }

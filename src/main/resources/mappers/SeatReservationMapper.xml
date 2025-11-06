@@ -10,44 +10,135 @@
         <result property="seatCode" column="seat_code"/>
         <result property="reserved" column="reserved"/>
         <result property="reservedAt" column="reserved_at"/>
-    </resultMap>
-    <resultMap id="AvailableSeatResultMap" type="com.novacinema.seat.model.dto.SeatDTO">
-        <id property="seatCode" column="seat_code"/>
-        <result property="seatType" column="seat_type"/>
-        <result property="screeningNum" column="screening_num"/>
-        <result property="sale" column="sale"/>
-        <result property="seatRealNum" column="seat_real_num"/>
-    </resultMap>
 
+        <!-- ScheduleDTO -->
+        <association property="scheduleDTO" javaType="com.novacinema.schedule.model.dto.ScheduleDTO">
+            <result property="screeningDate" column="screening_date"/>
+            <result property="screeningNum" column="sc_screening_num"/>
+            <result property="movieNum" column="movie_num"/>
+
+            <!-- InfoDTO -->
+            <association property="movieInfo" javaType="com.novacinema.info.model.dto.InfoDTO">
+                <result property="movieNum" column="movie_num"/>
+                <result property="movieTitle" column="movie_title"/>
+                <result property="runningTime" column="running_time"/>
+                <result property="audienceRating" column="audience_rating"/>
+            </association>
+
+            <!-- TheaterDTO -->
+            <association property="theaterInfo" javaType="com.novacinema.theater.model.dto.TheaterDTO">
+                <result property="screeningNum" column="sc_screening_num"/>
+                <result property="screeningNumber" column="screening_number"/>
+                <result property="branchNum" column="branch_num"/>
+
+                <!-- CinemaFranchiseDTO -->
+                <association property="cinemaFranchisedto" javaType="com.novacinema.cinemaFranchise.model.dto.CinemaFranchiseDTO">
+                    <result property="branchNum" column="branch_num"/>
+                    <result property="branchName" column="branch_name"/>
+                    <result property="address" column="address"/>
+                </association>
+            </association>
+        </association>
+
+        <!-- SeatDTO -->
+        <association property="seatDTO" javaType="com.novacinema.seat.model.dto.SeatDTO">
+            <result property="seatCode" column="seat_code"/>
+            <result property="seatType" column="seat_type"/>
+            <result property="rowLabel" column="row_label"/>
+            <result property="colNum" column="col_num"/>
+            <result property="price" column="price"/>
+            <result property="isAisle" column="is_aisle"/>
+            <result property="screeningNum" column="st_screening_num"/>
+        </association>
+
+    </resultMap>
     <select id="getAllReservations" resultMap="SeatReservationResultMap">
         SELECT
-        reservation_id,
-        schedule_num,
-        seat_code,
-        reserved,
-        reserved_at
-        FROM T_SeatReservation
+        sr.reservation_id,
+        sr.schedule_num,
+        sr.seat_code,
+        sr.reserved,
+        sr.reserved_at,
+
+        -- Schedule
+        sc.screening_date,
+        sc.screening_num AS sc_screening_num,
+        sc.movie_num,
+
+        -- Movie Info
+        mi.movie_title,
+        mi.running_time,
+        mi.audience_rating,
+
+        -- Theater
+        th.screening_number,
+        th.branch_num,
+
+        -- Cinema Franchise
+        cf.branch_name,
+        cf.address,
+
+        -- Seat
+        st.seat_type,
+        st.row_label,
+        st.col_num,
+        st.price,
+        st.is_aisle,
+        st.screening_num AS st_screening_num
+
+        FROM T_SeatReservation sr
+        JOIN T_Schedule sc ON sr.schedule_num = sc.schedule_num
+        JOIN T_Info mi ON sc.movie_num = mi.movie_num
+        JOIN T_Theater th ON sc.screening_num = th.screening_num
+        JOIN T_CinemaFranchise cf ON th.branch_num = cf.branch_num
+        JOIN T_Seat st ON sr.seat_code = st.seat_code
     </select>
-    <select id="getAvailableSeatsBySchedule" resultMap="AvailableSeatResultMap">
-    SELECT
-    seat_code,
-    seat_type,
-    screening_num,
-    sale,
-    seat_real_num
-    FROM T_Seat
-    WHERE screening_num = (
-    SELECT screening_num
-    FROM T_Schedule
-    WHERE schedule_num = #{scheduleNum}
-    )
-    AND seat_code NOT IN (
-    SELECT seat_code
-    FROM T_SeatReservation
-    WHERE schedule_num = #{scheduleNum}
-    AND reserved = TRUE
-    )
+
+
+
+    <resultMap id="SeatResultMap" type="com.novacinema.seat.model.dto.SeatDTO">
+        <id property="seatCode" column="seat_code"/>
+        <result property="seatType" column="seat_type"/>
+        <result property="rowLabel" column="row_label"/>
+        <result property="colNum" column="col_num"/>
+        <result property="price" column="price"/>
+        <result property="isAisle" column="is_aisle"/>
+        <result property="screeningNum" column="screening_num"/>
+    </resultMap>
+    <select id="getAvailableSeatsBySchedule" resultMap="SeatResultMap" parameterType="int">
+        SELECT
+        st.seat_code,
+        st.seat_type,
+        st.row_label,
+        st.col_num,
+        st.price,
+        st.is_aisle,
+        st.screening_num
+        FROM T_Seat st
+        WHERE st.screening_num = (
+        SELECT screening_num FROM T_Schedule WHERE schedule_num = #{scheduleNum}
+        )
+        AND st.seat_code NOT IN (
+        SELECT seat_code FROM T_SeatReservation WHERE schedule_num = #{scheduleNum} AND reserved = true
+        )
     </select>
+
+    <select id="getAllSeatsByScheduleNum" resultMap="SeatResultMap" parameterType="int">
+        SELECT
+        st.seat_code,
+        st.seat_type,
+        st.row_label,
+        st.col_num,
+        st.price,
+        st.is_aisle,
+        st.screening_num
+        FROM T_Seat st
+        WHERE st.screening_num = (
+        SELECT screening_num FROM T_Schedule WHERE schedule_num = #{scheduleNum}
+        )
+    </select>
+
+
 
     <insert id="insertSeatReservation" parameterType="com.novacinema.SeatReservationId.model.dto.SeatReservationDTO">
         INSERT INTO T_SeatReservation (
@@ -64,6 +155,7 @@
         #{reservedAt}
         )
     </insert>
+
 
     <update id="updateSeatReservedFlag" parameterType="com.novacinema.SeatReservationId.model.dto.SeatReservationDTO">
         UPDATE T_SeatReservation
