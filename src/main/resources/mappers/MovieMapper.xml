@@ -24,52 +24,57 @@
             i.movie_title AS movieTitle,
             s.schedule_num AS scheduleNum,
             s.screening_date AS screeningDate,
+            t.screening_number AS screeningNumber,   -- ✅ 수정완료
             i.running_time AS runningTime,
             i.audience_rating AS audienceRating
         FROM T_Info i
                  JOIN T_Schedule s ON i.movie_num = s.movie_num
                  JOIN T_Theater t ON s.screening_num = t.screening_num
                  JOIN T_CinemaFranchise c ON t.branch_num = c.branch_num
-        WHERE REPLACE(c.branch_name,' ','') LIKE CONCAT('%', REPLACE(#{branchName}, ' ', ''), '%')
-          AND s.screening_date >= NOW()                 -- ✅ 현재 시간 이후 상영만
-          AND DATE(s.screening_date) = CURDATE()        -- ✅ 오늘만
+        WHERE REPLACE(c.branch_name, ' ', '') LIKE CONCAT('%', REPLACE(#{branchName}, ' ', ''), '%')
+          AND s.screening_date >= NOW()
+          AND DATE(s.screening_date) = CURDATE()
         ORDER BY s.screening_date ASC
         ]]>
     </select>
 
 
     <!-- ✅ 3. 좌석 상태 조회 -->
-    <select id="findSeatStatus" resultType="map">
+    <select id="findSeatStatus" parameterType="int" resultType="map">
         SELECT
-            st.seat_code AS seatCode,
-            st.seat_real_num AS seat,
-            st.seat_type AS seatType,
-            st.sale AS price,         -- ✅ sale 컬럼으로 수정
+            TS.seat_code,
+            TS.row_label,
+            TS.col_num,
+            TS.seat_type,
+            TS.price,
+            TS.is_aisle,
             CASE
-                WHEN r.seat_code IS NULL THEN 1
-                ELSE 0
-                END AS available
-        FROM T_Seat st
-                 LEFT JOIN T_SeatReservation r       -- ✅ ReservationInfo 말고 SeatReservation 사용 권장
-                           ON st.seat_code = r.seat_code
-                               AND r.schedule_num = #{scheduleNum}
-                               AND r.reserved = TRUE         -- ✅ 예약된 좌석만 제외
-        WHERE st.screening_num =
-              (SELECT screening_num FROM T_Schedule WHERE schedule_num = #{scheduleNum})
-        ORDER BY st.seat_real_num ASC
+                WHEN TS.is_aisle = 1 THEN FALSE      -- ✅ 통로는 예약 안됨 처리
+                ELSE COALESCE(TSR.reserved, FALSE)
+                END AS reserved
+        FROM T_Seat TS
+                 LEFT JOIN T_SeatReservation TSR
+                           ON TS.seat_code = TSR.seat_code
+                               AND TSR.schedule_num = #{scheduleNum}
+        WHERE
+            TS.screening_num = (
+                SELECT screening_num
+                FROM T_Schedule
+                WHERE schedule_num = #{scheduleNum}
+            )
+        ORDER BY TS.row_label ASC, TS.col_num ASC;
     </select>
 
 
-    <!-- ✅ 4. 좌석 예약 (SeatReservation에 HOLD 기록) -->
+
+    <!-- ✅ 4. 좌석 HOLD(예약) 처리 -->
     <insert id="reserveSeat">
         INSERT INTO T_SeatReservation (
-            reservation_id,
             schedule_num,
             seat_code,
             reserved
         )
         VALUES (
-                   (SELECT IFNULL(MAX(reservation_id),9000) + 1 FROM T_SeatReservation),
                    #{scheduleNum},
                    #{seatCode},
                    TRUE
