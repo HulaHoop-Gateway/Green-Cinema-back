@@ -2,6 +2,7 @@ package com.novacinema.cinemaFranchise.model.service;
 
 import com.novacinema.cinemaFranchise.model.dao.MovieMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.Map;
 public class MovieService {
 
     private final MovieMapper movieMapper;
+    private final RestTemplate restTemplate = new RestTemplate();
 
     public MovieService(MovieMapper movieMapper) {
         this.movieMapper = movieMapper;
@@ -22,14 +24,12 @@ public class MovieService {
         try {
             switch (intent) {
 
-                // ✅ Step1: 가까운 영화관 조회
                 case "movie_booking_step1": {
                     List<Map<String, Object>> nearest = movieMapper.findNearestCinemas();
                     result.put("cinemas", nearest);
                     break;
                 }
 
-                // ✅ Step2: 특정 지점 상영 영화 조회
                 case "movie_booking_step2": {
                     String branchName = (String) data.get("branchName");
                     List<Map<String, Object>> movies = movieMapper.findNowPlaying(branchName);
@@ -37,7 +37,6 @@ public class MovieService {
                     break;
                 }
 
-                // ✅ Step3: 상영 시간 선택 후 해당 회차 좌석 조회
                 case "movie_booking_step3": {
                     Integer scheduleNum = (Integer) data.get("scheduleNum");
                     List<Map<String, Object>> seats = movieMapper.findSeatStatus(scheduleNum);
@@ -45,16 +44,28 @@ public class MovieService {
                     break;
                 }
 
-                // ✅ Step4: 좌석 선택 → HOLD 상태 예약
+                // ✅ 좌석 HOLD 예약 + Gateway에 브로드캐스트 요청
                 case "movie_booking_step4": {
                     Integer scheduleNum = (Integer) data.get("scheduleNum");
                     Integer seatCode = (Integer) data.get("seatCode");
-                    String memberName = (String) data.get("memberName");
 
-                    movieMapper.reserveSeat(scheduleNum, seatCode, memberName);
+                    movieMapper.reserveSeat(scheduleNum, seatCode);
+
+                    // ✅ Gateway에 알림 전송
+                    Map<String, Object> payload = Map.of("scheduleNum", scheduleNum);
+                    try {
+                        restTemplate.postForObject(
+                                "http://localhost:8080/internal/seat-updated",
+                                payload,
+                                Void.class
+                        );
+                        System.out.println("✅ Gateway에 좌석 업데이트 알림 전송");
+                    } catch (Exception ex) {
+                        System.out.println("⚠️ Gateway 통신 실패: " + ex.getMessage());
+                    }
 
                     result.put("status", "success");
-                    result.put("message", "좌석이 임시예약(HOLD)되었습니다. 10분 내 결제하세요.");
+                    result.put("message", "좌석 HOLD 완료 (10분 내 결제)");
                     break;
                 }
 
@@ -64,7 +75,7 @@ public class MovieService {
 
         } catch (Exception e) {
             e.printStackTrace();
-            result.put("error", "DB 처리 중 오류: " + e.getMessage());
+            result.put("error", "DB 오류 (이미 예약된 좌석일 수 있음)");
         }
 
         return result;
