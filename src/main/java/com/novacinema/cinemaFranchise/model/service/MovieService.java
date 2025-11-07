@@ -27,6 +27,7 @@ public class MovieService {
                 case "movie_booking_step1": {
                     List<Map<String, Object>> nearest = movieMapper.findNearestCinemas();
                     result.put("cinemas", nearest);
+                    System.out.println("🎯 영화관 목록: " + nearest);
                     break;
                 }
 
