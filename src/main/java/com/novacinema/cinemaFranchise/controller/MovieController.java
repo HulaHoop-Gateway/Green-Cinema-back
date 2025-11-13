@@ -2,7 +2,7 @@ package com.novacinema.cinemaFranchise.controller;
 
 import com.novacinema.cinemaFranchise.model.dto.IntentPayLoadDTO;
 import com.novacinema.cinemaFranchise.model.service.MovieBookingService;
-import com.novacinema.cinemaFranchise.model.service.MovieCancleService;
+import com.novacinema.cinemaFranchise.model.service.MovieCancelService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.slf4j.Logger;
@@ -17,9 +17,9 @@ public class MovieController {
     private static final Logger log = LoggerFactory.getLogger(MovieController.class);
 
     private final MovieBookingService movieService;
-    private final MovieCancleService movieCancelService;
+    private final MovieCancelService movieCancelService;
 
-    public MovieController(MovieBookingService movieService, MovieCancleService movieCancelService) {
+    public MovieController(MovieBookingService movieService, MovieCancelService movieCancelService) {
         this.movieService = movieService;
         this.movieCancelService = movieCancelService;
     }

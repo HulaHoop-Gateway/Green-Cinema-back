@@ -8,25 +8,28 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:5173") // ✅ 바로 여기!
+@CrossOrigin(origins = "http://localhost:5173") // ✅ 프론트 연결 허용
 @RequestMapping("/reservation")
 public class ReservationController {
+
     private final ReservationService reservationService;
-    public ReservationController( ReservationService reservationService){
+
+    public ReservationController(ReservationService reservationService) {
         this.reservationService = reservationService;
     }
-    /*db에서 얻어온 값  수신*/
+
+    /** ✅ 전체 예약 목록 조회 */
     @GetMapping("/list")
     public ResponseEntity<List<ReservationDTO>> getReservationDTOList() {
-        List<ReservationDTO> reservationList=reservationService.getAllReservations();
-        return ResponseEntity.ok(reservationList);
-    }
-    @GetMapping("/history")
-    public ResponseEntity<List<ReservationDTO>> getReservationHistory(@RequestParam int userCode) {
         List<ReservationDTO> reservationList = reservationService.getAllReservations();
         return ResponseEntity.ok(reservationList);
     }
 
-
+    /** ✅ 특정 사용자(핸드폰 번호 기준) 예약 내역 조회 */
+    @GetMapping("/history")
+    public ResponseEntity<List<ReservationDTO>> getReservationHistory(@RequestParam String phoneNumber) {
+        List<ReservationDTO> reservationList = reservationService.getReservationsByPhoneNumber(phoneNumber);
+        return ResponseEntity.ok(reservationList);
+    }
 
 }

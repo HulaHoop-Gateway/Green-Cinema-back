@@ -9,12 +9,12 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class MovieCancleService {
+public class MovieCancelService {
 
     private final ReservationMapper reservationMapper;
     private final ReservationCRUDService reservationCRUDService;
 
-    public MovieCancleService(ReservationMapper reservationMapper, ReservationCRUDService reservationCRUDService) {
+    public MovieCancelService(ReservationMapper reservationMapper, ReservationCRUDService reservationCRUDService) {
         this.reservationMapper = reservationMapper;
         this.reservationCRUDService = reservationCRUDService;
     }
@@ -27,18 +27,18 @@ public class MovieCancleService {
 
                 // 1️⃣ 취소 가능한 예매 목록 조회
                 case "movie_cancel_step1": {
-                    String memberCode = String.valueOf(data.get("memberCode"));
+                    String phoneNumber = String.valueOf(data.get("phoneNumber"));
 
-                    if (memberCode == null || memberCode.trim().isEmpty()) {
-                        result.put("error", "회원 코드가 유효하지 않습니다.");
+                    if (phoneNumber == null || phoneNumber.trim().isEmpty()) {
+                        result.put("error", "핸드폰 번호가 유효하지 않습니다.");
                         break;
                     }
 
-                    List<ReservationDTO> reservations = reservationMapper.selectReservationsByMemberCode(memberCode);
+                    List<ReservationDTO> reservations = reservationMapper.selectReservationsByPhoneNumber(phoneNumber);
 
                     List<ReservationDTO> cancelableReservations = reservations.stream()
-                            .filter(r -> r.getScheduleDTO().isCancelable())
-                            .filter(r -> !"취소됨".equals(r.getState())) // ✅ 수정됨
+                            .filter(r -> r.getScheduleDTO() != null && r.getScheduleDTO().isCancelable())
+                            .filter(r -> !"취소됨".equals(r.getState()))
                             .collect(Collectors.toList());
 
                     if (cancelableReservations.isEmpty()) {
@@ -66,8 +66,8 @@ public class MovieCancleService {
 
                     Optional<ReservationDTO> target = all.stream()
                             .filter(r -> r.getReservationNum().equals(reservationNum))
-                            .filter(r -> r.getScheduleDTO().isCancelable())
-                            .filter(r -> !"취소됨".equals(r.getState())) // ✅ 수정됨
+                            .filter(r -> r.getScheduleDTO() != null && r.getScheduleDTO().isCancelable())
+                            .filter(r -> !"취소됨".equals(r.getState()))
                             .findFirst();
 
                     if (target.isEmpty()) {
