@@ -9,14 +9,14 @@ import java.util.List;
 @Mapper
 public interface ReservationMapper {
     List<ReservationDTO> selectAllReservations();
-    List<ReservationDTO> selectReservationsByMemberCode();
+    List<ReservationDTO> selectReservationsByMemberCode(@Param("memberCode") String memberCode);
     int insertReservation(ReservationDTO reservationDTO);
 
 
     int updateReservationState(@Param("reservationNum") String reservationNum,
                                @Param("state") String newState);
 
-    ReservationDTO getReservationBySeatAndSchedule(int seatNumber, int scheduleNum);
+//    ReservationDTO getReservationBySeatAndSchedule(int seatNumber, int scheduleNum);
 
     String findMaxReservationIdForToday(String s);
 }

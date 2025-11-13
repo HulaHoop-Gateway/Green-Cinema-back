@@ -5,22 +5,20 @@
 <mapper namespace="com.novacinema.schedule.model.dao.ScheduleMapper">
 
     <!-- 🎬 기본 상영 일정 매핑 -->
-    <resultMap id="scheduleResultMap" type="com.novacinema.schedule.model.dto.ScheduleDTO">
+    <resultMap id="scheduleBasicResultMap" type="com.novacinema.schedule.model.dto.ScheduleDTO">
         <id property="scheduleNum" column="schedule_num"/>
-        <result property="screeningDate" column="screening_date"/>
+        <result property="screeningDate" column="screening_date" javaType="java.time.LocalDateTime"/>
         <result property="screeningNum" column="screening_num"/>
         <result property="movieNum" column="movie_num"/>
     </resultMap>
 
     <!-- 🎥 상세 상영 일정 매핑 (영화 + 상영관 + 지점 정보 포함) -->
-    <resultMap id="scheduleResultMap2" type="com.novacinema.schedule.model.dto.ScheduleDTO">
-        <!-- 기본 필드 -->
+    <resultMap id="scheduleDetailResultMap" type="com.novacinema.schedule.model.dto.ScheduleDTO">
         <id property="scheduleNum" column="schedule_num"/>
-        <result property="screeningDate" column="screening_date"/>
+        <result property="screeningDate" column="screening_date" javaType="java.time.LocalDateTime"/>
         <result property="screeningNum" column="screening_num"/>
         <result property="movieNum" column="movie_num"/>
 
-        <!-- 영화 정보 -->
         <association property="movieInfo" javaType="com.novacinema.info.model.dto.InfoDTO">
             <result property="movieNum" column="movie_num"/>
             <result property="movieTitle" column="movie_title"/>
@@ -28,7 +26,6 @@
             <result property="audienceRating" column="audience_rating"/>
         </association>
 
-        <!-- 상영관 + 지점 정보 -->
         <association property="theaterInfo" javaType="com.novacinema.theater.model.dto.TheaterDTO">
             <result property="screeningNum" column="screening_num"/>
             <result property="screeningNumber" column="screening_number"/>
@@ -43,7 +40,7 @@
     </resultMap>
 
     <!-- 📅 전체 상영 일정 조회 쿼리 -->
-    <select id="selectAllSchedules" resultMap="scheduleResultMap2">
+    <select id="selectAllSchedules" resultMap="scheduleDetailResultMap">
         SELECT
         s.schedule_num,
         s.screening_date,
@@ -62,7 +59,26 @@
         JOIN T_CinemaFranchise c ON t.branch_num = c.branch_num
     </select>
 
-
-
+    <select id="findSchedulesByBranchNum" resultMap="scheduleDetailResultMap">
+        SELECT
+        s.schedule_num,
+        s.screening_date,
+        s.screening_num,
+        s.movie_num,
+        f.movie_title,
+        f.running_time,
+        f.audience_rating,
+        t.screening_number,
+        t.branch_num,
+        c.branch_name,
+        c.address
+        FROM T_Schedule s
+        JOIN T_Info f ON s.movie_num = f.movie_num
+        JOIN T_Theater t ON s.screening_num = t.screening_num
+        JOIN T_CinemaFranchise c ON t.branch_num = c.branch_num
+        WHERE t.branch_num = #{branchNum}
+        AND s.screening_date > NOW()
+        ORDER BY s.screening_date ASC
+    </select>
 
 </mapper>

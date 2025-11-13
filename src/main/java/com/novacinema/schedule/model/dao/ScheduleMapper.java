@@ -11,6 +11,7 @@ import java.util.List;
 @Mapper
 public interface ScheduleMapper {
     List<ScheduleDTO> selectAllSchedules();
+    List<ScheduleDTO> findSchedulesByBranchNum(@Param("branchNum") String branchNum);
 
 
 }

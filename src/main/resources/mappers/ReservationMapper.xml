@@ -121,7 +121,7 @@
         JOIN T_CinemaFranchise cf ON th.branch_num = cf.branch_num
     </select>
     <!-- 🔍 특정 회원의 예약 조회 -->
-    <select id="selectReservationsByMemberCode" parameterType="int" resultMap="reservationInfoDetailResultMap">
+    <select id="selectReservationsByMemberCode" parameterType="string" resultMap="reservationInfoDetailResultMap">
         SELECT
         r.reservation_num,
         r.seat_number,

@@ -1,6 +1,6 @@
 package com.novacinema.user.model.dto;
 public class UserDTO {
-    private int memberCode;
+    private String memberCode;
     private String memberName;
     private String id;
     private String password;
@@ -8,7 +8,7 @@ public class UserDTO {
 
     public UserDTO() {}
 
-    public UserDTO(int memberCode, String memberName, String id, String password, String phoneNumber) {
+    public UserDTO(String memberCode, String memberName, String id, String password, String phoneNumber) {
         this.memberCode = memberCode;
         this.memberName = memberName;
         this.id = id;
@@ -16,11 +16,11 @@ public class UserDTO {
         this.phoneNumber = phoneNumber;
     }
 
-    public int getMemberCode() {
+    public String getMemberCode() {
         return memberCode;
     }
 
-    public void setMemberCode(int memberCode) {
+    public void setMemberCode(String memberCode) {
         this.memberCode = memberCode;
     }
 
