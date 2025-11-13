@@ -9,12 +9,12 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class MovieCancelService {
+public class MovieCancleService {
 
     private final ReservationMapper reservationMapper;
     private final ReservationCRUDService reservationCRUDService;
 
-    public MovieCancelService(ReservationMapper reservationMapper, ReservationCRUDService reservationCRUDService) {
+    public MovieCancleService(ReservationMapper reservationMapper, ReservationCRUDService reservationCRUDService) {
         this.reservationMapper = reservationMapper;
         this.reservationCRUDService = reservationCRUDService;
     }
@@ -30,7 +30,7 @@ public class MovieCancelService {
                     String phoneNumber = String.valueOf(data.get("phoneNumber"));
 
                     if (phoneNumber == null || phoneNumber.trim().isEmpty()) {
-                        result.put("error", "핸드폰 번호가 유효하지 않습니다.");
+                        result.put("error", "전화번호가 유효하지 않습니다.");
                         break;
                     }
 
@@ -62,6 +62,12 @@ public class MovieCancelService {
                 // 2️⃣ 예매 선택 확인
                 case "movie_cancel_step2": {
                     String reservationNum = String.valueOf(data.get("reservationNum"));
+
+                    if (reservationNum == null || reservationNum.trim().isEmpty()) {
+                        result.put("message", "❌ 예매 번호가 유효하지 않습니다.");
+                        break;
+                    }
+
                     List<ReservationDTO> all = reservationMapper.selectAllReservations();
 
                     Optional<ReservationDTO> target = all.stream()

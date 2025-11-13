@@ -39,8 +39,7 @@ public class MovieBookingService {
 
         try {
             switch (intent) {
-
-                /** 🎬 Step 1: 영화관 지점 선택 */
+                /*영화관 상영관 선택*/
                 case "movie_booking_step1": {
                     List<CinemaFranchiseDTO> nearest = cinemaFranchiseMapper.findAllCinemaFranchises();
 
@@ -57,10 +56,10 @@ public class MovieBookingService {
                     result.put("cinemas", cinemaMaps);
                     break;
                 }
-
-                /** 🎥 Step 2: 해당 지점의 스케줄 조회 */
+                /*해당 지점의 스케줄 선택*/
                 case "movie_booking_step2": {
                     String branchNum = String.valueOf(data.get("branchNum"));
+
                     List<ScheduleDTO> schedules = scheduleMapper.findSchedulesByBranchNum(branchNum);
 
                     List<Map<String, Object>> scheduleMaps = schedules.stream().map(s -> {
@@ -76,8 +75,7 @@ public class MovieBookingService {
                     result.put("movies", scheduleMaps);
                     break;
                 }
-
-                /** 💺 Step 3: 좌석 선택 */
+                /*좌석 선택*/
                 case "movie_booking_step3": {
                     int scheduleNum = Integer.parseInt(String.valueOf(data.get("scheduleNum")));
 
@@ -90,7 +88,7 @@ public class MovieBookingService {
 
                     List<Map<String, Object>> seatMaps = allSeats.stream().map(seat -> {
                         Map<String, Object> m = new HashMap<>();
-                        m.put("seat_code", seat.getSeatCode());
+                        m.put("seat_code", seat.getSeatCode()); // ✅ 추가됨
                         m.put("row_label", seat.getRowLabel());
                         m.put("col_num", seat.getColNum());
                         m.put("is_aisle", seat.getIsAisle());
@@ -101,16 +99,15 @@ public class MovieBookingService {
                     result.put("seats", seatMaps);
                     break;
                 }
-
-                /** 🎫 Step 4: 예매 확정 */
+                /*예매 하기*/
                 case "movie_booking_step4": {
                     int scheduleNum = Integer.parseInt(String.valueOf(data.get("scheduleNum")));
                     int seatCode = Integer.parseInt(String.valueOf(data.get("seatCode")));
-                    String phoneNumber = String.valueOf(data.get("phoneNumber")); // ✅ 변경됨
+                    String phoneNumber = String.valueOf(data.get("phoneNumber")); // ✅ 문자열로 처리
 
                     ReservationDTO reservationDTO = new ReservationDTO();
                     reservationDTO.setScheduleNum(scheduleNum);
-                    reservationDTO.setPhoneNumber(phoneNumber); // ✅ memberCode → phoneNumber
+                    reservationDTO.setPhoneNumber(phoneNumber); // ✅ 문자열로 설정
                     reservationDTO.setSeatNumber(seatCode);
                     reservationDTO.setState("예매완료");
                     reservationDTO.setPaymentTime(LocalDateTime.now());
@@ -131,6 +128,7 @@ public class MovieBookingService {
                     }
                     break;
                 }
+
 
                 default:
                     result.put("error", "Unknown intent: " + intent);

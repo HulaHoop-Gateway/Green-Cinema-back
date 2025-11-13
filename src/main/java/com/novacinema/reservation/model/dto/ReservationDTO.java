@@ -11,7 +11,7 @@ public class ReservationDTO {
     private long seatNumber;             // 좌석 코드
     private LocalDateTime paymentTime;   // 결제 시간
     private String state;                // 예약 상태
-    private String phoneNumber;          // ✅ 핸드폰 번호 (기존 memberCode → 변경)
+    private String phoneNumber;            // 회원 코드 현재 전화번호
     private int scheduleNum;             // 상영 일정 코드
 
     private SeatDTO seatDTO;
@@ -65,11 +65,11 @@ public class ReservationDTO {
         this.state = state;
     }
 
-    public String getPhoneNumber() {          // ✅ 변경
+    public String getPhoneNumber() {
         return phoneNumber;
     }
 
-    public void setPhoneNumber(String phoneNumber) {   // ✅ 변경
+    public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
 
@@ -103,20 +103,5 @@ public class ReservationDTO {
 
     public void setScheduleDTO(ScheduleDTO scheduleDTO) {
         this.scheduleDTO = scheduleDTO;
-    }
-
-    @Override
-    public String toString() {
-        return "ReservationDTO{" +
-                "reservationNum='" + reservationNum + '\'' +
-                ", seatNumber=" + seatNumber +
-                ", paymentTime=" + paymentTime +
-                ", state='" + state + '\'' +
-                ", phoneNumber='" + phoneNumber + '\'' +   // ✅ 변경
-                ", scheduleNum=" + scheduleNum +
-                ", seatDTO=" + seatDTO +
-                ", userDTO=" + userDTO +
-                ", scheduleDTO=" + scheduleDTO +
-                '}';
     }
 }
