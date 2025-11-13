@@ -9,7 +9,6 @@ import java.math.BigDecimal;
 public class SeatDTO {
     private int seatCode;           // 좌석 고유 코드
     private String seatType;        // 좌석 종류 (일반석, 커플석 등)
-    private String seatRealNum;     // 실제 좌석 번호 (예: A1, B2)
     private BigDecimal sale;        // 가격
     private int screeningNum;       // 상영관 번호 (FK)
     private int price;
@@ -23,10 +22,9 @@ public class SeatDTO {
     public SeatDTO() {
     }
 
-    public SeatDTO(int seatCode, String seatType, String seatRealNum, BigDecimal sale, int screeningNum, int price, int isAisle, String rowLabel, int colNum, TheaterDTO theaterDTO, ScheduleDTO scheduleDTO) {
+    public SeatDTO(int seatCode, String seatType,  BigDecimal sale, int screeningNum, int price, int isAisle, String rowLabel, int colNum, TheaterDTO theaterDTO, ScheduleDTO scheduleDTO) {
         this.seatCode = seatCode;
         this.seatType = seatType;
-        this.seatRealNum = seatRealNum;
         this.sale = sale;
         this.screeningNum = screeningNum;
         this.price = price;
@@ -53,13 +51,7 @@ public class SeatDTO {
         this.seatType = seatType;
     }
 
-    public String getSeatRealNum() {
-        return seatRealNum;
-    }
 
-    public void setSeatRealNum(String seatRealNum) {
-        this.seatRealNum = seatRealNum;
-    }
 
     public BigDecimal getSale() {
         return sale;
@@ -130,7 +122,6 @@ public class SeatDTO {
         return "SeatDTO{" +
                 "seatCode=" + seatCode +
                 ", seatType='" + seatType + '\'' +
-                ", seatRealNum='" + seatRealNum + '\'' +
                 ", sale=" + sale +
                 ", screeningNum=" + screeningNum +
                 ", price=" + price +

@@ -11,7 +11,7 @@ public class ReservationDTO {
     private long seatNumber;             // 좌석 코드
     private LocalDateTime paymentTime;   // 결제 시간
     private String state;                // 예약 상태
-    private String memberCode;              // 회원 코드
+    private String phoneNumber;            // 회원 코드 현재 전화번호
     private int scheduleNum;             // 상영 일정 코드
 
     private SeatDTO seatDTO;
@@ -21,12 +21,12 @@ public class ReservationDTO {
     public ReservationDTO() {
     }
 
-    public ReservationDTO(String reservationNum, long seatNumber, LocalDateTime paymentTime, String state, String memberCode, int scheduleNum, SeatDTO seatDTO, UserDTO userDTO, ScheduleDTO scheduleDTO) {
+    public ReservationDTO(String reservationNum, long seatNumber, LocalDateTime paymentTime, String state, String phoneNumber, int scheduleNum, SeatDTO seatDTO, UserDTO userDTO, ScheduleDTO scheduleDTO) {
         this.reservationNum = reservationNum;
         this.seatNumber = seatNumber;
         this.paymentTime = paymentTime;
         this.state = state;
-        this.memberCode = memberCode;
+        this.phoneNumber = phoneNumber;
         this.scheduleNum = scheduleNum;
         this.seatDTO = seatDTO;
         this.userDTO = userDTO;
@@ -65,12 +65,12 @@ public class ReservationDTO {
         this.state = state;
     }
 
-    public String getMemberCode() {
-        return memberCode;
+    public String getPhoneNumber() {
+        return phoneNumber;
     }
 
-    public void setMemberCode(String memberCode) {
-        this.memberCode = memberCode;
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 
     public int getScheduleNum() {
@@ -103,20 +103,5 @@ public class ReservationDTO {
 
     public void setScheduleDTO(ScheduleDTO scheduleDTO) {
         this.scheduleDTO = scheduleDTO;
-    }
-
-    @Override
-    public String toString() {
-        return "ReservationDTO{" +
-                "reservationNum='" + reservationNum + '\'' +
-                ", seatNumber=" + seatNumber +
-                ", paymentTime=" + paymentTime +
-                ", state='" + state + '\'' +
-                ", memberCode=" + memberCode +
-                ", scheduleNum=" + scheduleNum +
-                ", seatDTO=" + seatDTO +
-                ", userDTO=" + userDTO +
-                ", scheduleDTO=" + scheduleDTO +
-                '}';
     }
 }

@@ -8,15 +8,20 @@ import java.util.List;
 
 @Mapper
 public interface ReservationMapper {
+
+    // 전체 예매 조회
     List<ReservationDTO> selectAllReservations();
-    List<ReservationDTO> selectReservationsByMemberCode(@Param("memberCode") String memberCode);
+
+    // 전화번호 기반 예매 조회
+    List<ReservationDTO> selectReservationsByPhoneNumber(@Param("phoneNumber") String phoneNumber);
+
+    // 예매 등록
     int insertReservation(ReservationDTO reservationDTO);
 
-
+    // 예매 상태 업데이트
     int updateReservationState(@Param("reservationNum") String reservationNum,
                                @Param("state") String newState);
 
-//    ReservationDTO getReservationBySeatAndSchedule(int seatNumber, int scheduleNum);
-
-    String findMaxReservationIdForToday(String s);
+    // 오늘 날짜 기준 최대 예매번호 조회
+    String findMaxReservationIdForToday(@Param("prefix") String prefix);
 }

@@ -103,11 +103,11 @@ public class MovieBookingService {
                 case "movie_booking_step4": {
                     int scheduleNum = Integer.parseInt(String.valueOf(data.get("scheduleNum")));
                     int seatCode = Integer.parseInt(String.valueOf(data.get("seatCode")));
-                    String memberCode = String.valueOf(data.get("memberCode")); // ✅ 문자열로 처리
+                    String phoneNumber = String.valueOf(data.get("phoneNumber")); // ✅ 문자열로 처리
 
                     ReservationDTO reservationDTO = new ReservationDTO();
                     reservationDTO.setScheduleNum(scheduleNum);
-                    reservationDTO.setMemberCode(memberCode); // ✅ 문자열로 설정
+                    reservationDTO.setPhoneNumber(phoneNumber); // ✅ 문자열로 설정
                     reservationDTO.setSeatNumber(seatCode);
                     reservationDTO.setState("예매완료");
                     reservationDTO.setPaymentTime(LocalDateTime.now());
