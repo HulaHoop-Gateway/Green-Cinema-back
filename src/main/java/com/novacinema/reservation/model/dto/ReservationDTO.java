@@ -11,7 +11,7 @@ public class ReservationDTO {
     private long seatNumber;             // 좌석 코드
     private LocalDateTime paymentTime;   // 결제 시간
     private String state;                // 예약 상태
-    private int memberCode;              // 회원 코드
+    private String memberCode;              // 회원 코드
     private int scheduleNum;             // 상영 일정 코드
 
     private SeatDTO seatDTO;
@@ -21,7 +21,7 @@ public class ReservationDTO {
     public ReservationDTO() {
     }
 
-    public ReservationDTO(String reservationNum, long seatNumber, LocalDateTime paymentTime, String state, int memberCode, int scheduleNum, SeatDTO seatDTO, UserDTO userDTO, ScheduleDTO scheduleDTO) {
+    public ReservationDTO(String reservationNum, long seatNumber, LocalDateTime paymentTime, String state, String memberCode, int scheduleNum, SeatDTO seatDTO, UserDTO userDTO, ScheduleDTO scheduleDTO) {
         this.reservationNum = reservationNum;
         this.seatNumber = seatNumber;
         this.paymentTime = paymentTime;
@@ -65,11 +65,11 @@ public class ReservationDTO {
         this.state = state;
     }
 
-    public int getMemberCode() {
+    public String getMemberCode() {
         return memberCode;
     }
 
-    public void setMemberCode(int memberCode) {
+    public void setMemberCode(String memberCode) {
         this.memberCode = memberCode;
     }
 

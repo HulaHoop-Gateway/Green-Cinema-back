@@ -3,13 +3,11 @@ package com.novacinema.schedule.model.dto;
 import com.novacinema.info.model.dto.InfoDTO;
 import com.novacinema.theater.model.dto.TheaterDTO;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 
 public class ScheduleDTO {
     private int scheduleNum;
-    private String screeningDate;
+    private LocalDateTime screeningDate; // ✅ 변경됨
     private int screeningNum;
     private int movieNum;
 
@@ -19,7 +17,7 @@ public class ScheduleDTO {
     public ScheduleDTO() {
     }
 
-    public ScheduleDTO(int scheduleNum, String screeningDate, int screeningNum, int movieNum, InfoDTO movieInfo, TheaterDTO theaterInfo) {
+    public ScheduleDTO(int scheduleNum, LocalDateTime screeningDate, int screeningNum, int movieNum, InfoDTO movieInfo, TheaterDTO theaterInfo) {
         this.scheduleNum = scheduleNum;
         this.screeningDate = screeningDate;
         this.screeningNum = screeningNum;
@@ -27,6 +25,12 @@ public class ScheduleDTO {
         this.movieInfo = movieInfo;
         this.theaterInfo = theaterInfo;
     }
+
+    // ✅ 예매 취소 가능 여부 판단
+    public boolean isCancelable() {
+        return screeningDate.isAfter(LocalDateTime.now().minusMinutes(1));
+    }
+
 
     public int getScheduleNum() {
         return scheduleNum;
@@ -36,11 +40,11 @@ public class ScheduleDTO {
         this.scheduleNum = scheduleNum;
     }
 
-    public String getScreeningDate() {
+    public LocalDateTime getScreeningDate() {
         return screeningDate;
     }
 
-    public void setScreeningDate(String screeningDate) {
+    public void setScreeningDate(LocalDateTime screeningDate) {
         this.screeningDate = screeningDate;
     }
 
@@ -80,7 +84,7 @@ public class ScheduleDTO {
     public String toString() {
         return "ScheduleDTO{" +
                 "scheduleNum=" + scheduleNum +
-                ", screeningDate='" + screeningDate + '\'' +
+                ", screeningDate=" + screeningDate +
                 ", screeningNum=" + screeningNum +
                 ", movieNum=" + movieNum +
                 ", movieInfo=" + movieInfo +
