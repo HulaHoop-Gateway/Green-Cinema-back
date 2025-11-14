@@ -27,7 +27,8 @@ public class AuthController {
             return ResponseEntity.ok(Map.of(
                     "message", "로그인 성공",
                     "name", user.getMemberName(),
-                    "userCode", user.getMemberCode()
+                    "userCode", user.getMemberCode(),
+                    "phoneNumber", user.getPhoneNumber()
             ));
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "로그인 실패"));

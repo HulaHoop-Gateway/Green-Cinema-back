@@ -9,12 +9,12 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class MovieCancleService {
+public class MovieCancelService {
 
     private final ReservationMapper reservationMapper;
     private final ReservationCRUDService reservationCRUDService;
 
-    public MovieCancleService(ReservationMapper reservationMapper, ReservationCRUDService reservationCRUDService) {
+    public MovieCancelService(ReservationMapper reservationMapper, ReservationCRUDService reservationCRUDService) {
         this.reservationMapper = reservationMapper;
         this.reservationCRUDService = reservationCRUDService;
     }

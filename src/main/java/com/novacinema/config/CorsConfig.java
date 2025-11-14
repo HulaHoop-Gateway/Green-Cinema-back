@@ -16,7 +16,7 @@ public class CorsConfig {
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**") // 모든 API 경로에 적용
                         // ⭐️ http://localhost:3000 오리진을 허용합니다.
-                        .allowedOriginPatterns("http://localhost:3000")
+                        .allowedOriginPatterns("http://localhost:3000","http://localhost:5175")
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
                         // ⭐️ 자격 증명(쿠키 등)을 허용하면 이 설정이 필수
