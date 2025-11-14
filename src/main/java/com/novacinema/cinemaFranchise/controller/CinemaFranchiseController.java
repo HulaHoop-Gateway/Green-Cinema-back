@@ -74,7 +74,4 @@ public class CinemaFranchiseController {
         return ResponseEntity.ok("지점 번호 " + dto.getBranchNum() + " 수정 완료");
     }
 
-
-
-
 }
