@@ -2,6 +2,7 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
 <mapper namespace="com.novacinema.schedule.model.dao.ScheduleMapper">
 
     <!-- 🎬 기본 상영 일정 매핑 -->
@@ -39,7 +40,7 @@
         </association>
     </resultMap>
 
-    <!-- 📅 전체 상영 일정 조회 쿼리 -->
+    <!-- 📅 기본 전체 스케줄 조회 -->
     <select id="selectAllSchedules" resultMap="scheduleDetailResultMap">
         SELECT
         s.schedule_num,
@@ -59,7 +60,8 @@
         JOIN T_CinemaFranchise c ON t.branch_num = c.branch_num
     </select>
 
-    <select id="findSchedulesByBranchNum" resultMap="scheduleDetailResultMap">
+    <!-- 🔥 날짜 기반 조건 추가: 오늘/내일/특정 날짜 필터링 -->
+    <select id="findSchedulesByBranchNumAndDate" resultMap="scheduleDetailResultMap">
         SELECT
         s.schedule_num,
         s.screening_date,
@@ -77,8 +79,42 @@
         JOIN T_Theater t ON s.screening_num = t.screening_num
         JOIN T_CinemaFranchise c ON t.branch_num = c.branch_num
         WHERE t.branch_num = #{branchNum}
-        AND s.screening_date > NOW()
+
+        <!-- ⭐ 특정 날짜가 오면 해당 날짜만 조회 -->
+        <if test="screeningDate != null and screeningDate != '' and screeningDate != 'today' and screeningDate != 'tomorrow'">
+            AND DATE(s.screening_date) = DATE(#{screeningDate})
+        </if>
+
+        <!-- ⭐ 내일: 날짜만 필터링하고 시간 조건은 적용하지 않음 -->
+        <if test="screeningDate == 'tomorrow'">
+            AND DATE(s.screening_date) = DATE(DATE_ADD(CURDATE(), INTERVAL 1 DAY))
+        </if>
+
+        <!-- ⭐ 오늘: 날짜 + 현재 시간 이후만 -->
+        <if test="screeningDate == 'today'">
+            AND DATE(s.screening_date) = CURDATE()
+            AND TIME(s.screening_date) >= CURTIME()
+        </if>
+
+        <!-- ⭐ 날짜 지정이 전혀 없으면 오늘 + 현재 시간 이후만 -->
+        <if test="screeningDate == null or screeningDate == ''">
+            AND DATE(s.screening_date) = CURDATE()
+            AND TIME(s.screening_date) >= CURTIME()
+        </if>
+
         ORDER BY s.screening_date ASC
     </select>
+
+    <select id="findMerchantCodeByScheduleNum" resultType="string">
+        SELECT c.branch_name
+        FROM T_Schedule s
+        JOIN T_Theater t ON s.screening_num = t.screening_num
+        JOIN T_CinemaFranchise c ON t.branch_num = c.branch_num
+        WHERE s.schedule_num = #{scheduleNum}
+        LIMIT 1
+    </select>
+
+
+
 
 </mapper>

@@ -3,7 +3,9 @@ package com.novacinema.cinemaFranchise.model.service;
 import com.novacinema.reservation.model.dao.ReservationMapper;
 import com.novacinema.reservation.model.dto.ReservationDTO;
 import com.novacinema.reservationCRUD.service.ReservationCRUDService;
+import com.novacinema.schedule.model.dao.ScheduleMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -13,10 +15,16 @@ public class MovieCancelService {
 
     private final ReservationMapper reservationMapper;
     private final ReservationCRUDService reservationCRUDService;
+    private final ScheduleMapper scheduleMapper;   // ⭐ 추가됨
 
-    public MovieCancelService(ReservationMapper reservationMapper, ReservationCRUDService reservationCRUDService) {
+    public MovieCancelService(
+            ReservationMapper reservationMapper,
+            ReservationCRUDService reservationCRUDService,
+            ScheduleMapper scheduleMapper   // ⭐ 추가됨
+    ) {
         this.reservationMapper = reservationMapper;
         this.reservationCRUDService = reservationCRUDService;
+        this.scheduleMapper = scheduleMapper;      // ⭐ 추가됨
     }
 
     public Map<String, Object> processIntent(String intent, Map<String, Object> data) {
@@ -91,7 +99,7 @@ public class MovieCancelService {
                     break;
                 }
 
-                // 3️⃣ 실제 예매 취소 처리
+                // 3️⃣ 실제 예매 취소 처리 + 관리자 서버 취소트랜잭션 INSERT
                 case "movie_cancel_step3": {
                     String reservationNum = String.valueOf(data.get("reservationNum"));
 
@@ -100,12 +108,52 @@ public class MovieCancelService {
                         break;
                     }
 
+                    // 1️⃣ 예매 상세 정보 가져오기
+                    ReservationDTO reservation = reservationMapper.selectReservationByNum(reservationNum);
+
+                    if (reservation == null) {
+                        result.put("message", "❌ 해당 예매 정보를 찾을 수 없습니다.");
+                        break;
+                    }
+
+                    String phoneNumber = reservation.getPhoneNumber();
+                    int scheduleNum = reservation.getScheduleNum();
+
+                    // ⭐ 예매 금액 seat 테이블에서 가져옴
+                    int amountUsed = reservation.getSeatDTO().getPrice();
+
+                    // ⭐ schedule → theater → branch → merchantCode 조회
+                    String merchantCode = scheduleMapper.findMerchantCodeByScheduleNum(scheduleNum);
+
+                    // 2️⃣ 예매 상태 업데이트 + 좌석 해제
                     boolean success = reservationCRUDService.updateReservationState(reservationNum);
 
-                    if (success) {
-                        result.put("message", "✅ 예매가 성공적으로 취소되었습니다.");
-                    } else {
-                        result.put("message", "⚠️ 예매 취소에 실패했습니다. 예매 번호를 확인해주세요.");
+                    if (!success) {
+                        result.put("message", "⚠️ 예매 취소 상태 업데이트 실패");
+                        break;
+                    }
+
+                    // 3️⃣ 관리자 서버로 취소 트랜잭션 INSERT
+                    try {
+                        RestTemplate restTemplate = new RestTemplate();
+
+                        String url = "http://localhost:8000/api/transactions/add";
+
+                        Map<String, Object> payload = new HashMap<>();
+                        payload.put("phoneNum", phoneNumber);
+                        payload.put("merchantCode", merchantCode);
+                        payload.put("amountUsed", amountUsed);
+                        payload.put("status", "R"); // 취소 코드
+                        payload.put("startDate", null);
+                        payload.put("endDate", null);
+
+                        restTemplate.postForObject(url, payload, String.class);
+
+                        result.put("message", "🟢 예매 취소 및 거래 취소 기록 완료!");
+
+                    } catch (Exception e) {
+                        result.put("message",
+                                "⚠️ 예매는 취소되었지만 관리자 서버 기록 실패: " + e.getMessage());
                     }
 
                     break;
