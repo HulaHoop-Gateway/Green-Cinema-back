@@ -15,6 +15,9 @@ public interface ReservationMapper {
     // 전화번호 기반 예매 조회
     List<ReservationDTO> selectReservationsByPhoneNumber(@Param("phoneNumber") String phoneNumber);
 
+    // 예매 번호로 단일 조회 (⭐ 추가)
+    ReservationDTO selectReservationByNum(@Param("reservationNum") String reservationNum);
+
     // 예매 등록
     int insertReservation(ReservationDTO reservationDTO);
 

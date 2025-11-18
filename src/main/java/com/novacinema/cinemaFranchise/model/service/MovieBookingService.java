@@ -35,12 +35,14 @@ public class MovieBookingService {
     }
 
     public Map<String, Object> processIntent(String intent, Map<String, Object> data) {
+
         Map<String, Object> result = new HashMap<>();
 
         try {
             switch (intent) {
-                /*영화관 상영관 선택*/
+
                 case "movie_booking_step1": {
+
                     List<CinemaFranchiseDTO> nearest = cinemaFranchiseMapper.findAllCinemaFranchises();
 
                     List<Map<String, Object>> cinemaMaps = nearest.stream()
@@ -56,11 +58,22 @@ public class MovieBookingService {
                     result.put("cinemas", cinemaMaps);
                     break;
                 }
-                /*해당 지점의 스케줄 선택*/
-                case "movie_booking_step2": {
-                    String branchNum = String.valueOf(data.get("branchNum"));
 
-                    List<ScheduleDTO> schedules = scheduleMapper.findSchedulesByBranchNum(branchNum);
+                case "movie_booking_step2": {
+
+                    String branchNum = String.valueOf(data.get("branchNum"));
+                    String date = (String) data.get("dateFilter");
+
+                    List<ScheduleDTO> schedules;
+
+                    if (date == null || date.isBlank()) {
+                        schedules = scheduleMapper.findSchedulesByBranchNumAndDate(
+                                branchNum,
+                                LocalDateTime.now().toLocalDate().toString()
+                        );
+                    } else {
+                        schedules = scheduleMapper.findSchedulesByBranchNumAndDate(branchNum, date);
+                    }
 
                     List<Map<String, Object>> scheduleMaps = schedules.stream().map(s -> {
                         Map<String, Object> m = new HashMap<>();
@@ -75,8 +88,9 @@ public class MovieBookingService {
                     result.put("movies", scheduleMaps);
                     break;
                 }
-                /*좌석 선택*/
+
                 case "movie_booking_step3": {
+
                     int scheduleNum = Integer.parseInt(String.valueOf(data.get("scheduleNum")));
 
                     List<SeatDTO> allSeats = seatReservationService.getAllSeatsByScheduleNum(scheduleNum);
@@ -88,7 +102,7 @@ public class MovieBookingService {
 
                     List<Map<String, Object>> seatMaps = allSeats.stream().map(seat -> {
                         Map<String, Object> m = new HashMap<>();
-                        m.put("seat_code", seat.getSeatCode()); // ✅ 추가됨
+                        m.put("seat_code", seat.getSeatCode());
                         m.put("row_label", seat.getRowLabel());
                         m.put("col_num", seat.getColNum());
                         m.put("is_aisle", seat.getIsAisle());
@@ -99,15 +113,16 @@ public class MovieBookingService {
                     result.put("seats", seatMaps);
                     break;
                 }
-                /*예매 하기*/
+
                 case "movie_booking_step4": {
+
                     int scheduleNum = Integer.parseInt(String.valueOf(data.get("scheduleNum")));
                     int seatCode = Integer.parseInt(String.valueOf(data.get("seatCode")));
-                    String phoneNumber = String.valueOf(data.get("phoneNumber")); // ✅ 문자열로 처리
+                    String phoneNumber = String.valueOf(data.get("phoneNumber"));
 
                     ReservationDTO reservationDTO = new ReservationDTO();
                     reservationDTO.setScheduleNum(scheduleNum);
-                    reservationDTO.setPhoneNumber(phoneNumber); // ✅ 문자열로 설정
+                    reservationDTO.setPhoneNumber(phoneNumber);
                     reservationDTO.setSeatNumber(seatCode);
                     reservationDTO.setState("예매완료");
                     reservationDTO.setPaymentTime(LocalDateTime.now());
@@ -120,15 +135,16 @@ public class MovieBookingService {
 
                     try {
                         reservationCRUDService.reserveSeatAndInsertReservation(reservationDTO, seatReservationDTO);
+                        sendTransactionToAdminServer(phoneNumber, scheduleNum);
                         result.put("message", "🎉 예매가 완료되었습니다!");
                     } catch (RuntimeException e) {
                         result.put("error", "예매 실패: " + e.getMessage());
                     } catch (Exception e) {
                         result.put("error", "예매 처리 중 오류 발생: " + e.getMessage());
                     }
+
                     break;
                 }
-
 
                 default:
                     result.put("error", "Unknown intent: " + intent);
@@ -136,9 +152,39 @@ public class MovieBookingService {
 
         } catch (Exception e) {
             e.printStackTrace();
-            result.put("error", "DB 오류 (이미 예약된 좌석일 수 있음)");
+            result.put("error", "Server Error: " + e.getMessage());
         }
 
         return result;
+    }
+
+    // 관리자 서버로 거래 기록 전송
+    private void sendTransactionToAdminServer(String phoneNumber, int scheduleNum) {
+
+        try {
+            org.springframework.web.client.RestTemplate restTemplate =
+                    new org.springframework.web.client.RestTemplate();
+
+            String url = "http://localhost:8000/api/transactions/add";
+
+            // ⭐ scheduleNum → merchant_code 조회
+            String merchantCode = scheduleMapper.findMerchantCodeByScheduleNum(scheduleNum);
+
+            // ⭐ 관리자 서버 JSON 규칙에 맞게 camelCase 사용
+            Map<String, Object> payload = new HashMap<>();
+            payload.put("phoneNum", phoneNumber);
+            payload.put("merchantCode", merchantCode);
+            payload.put("amountUsed", 12000);
+            payload.put("status", "S");
+            payload.put("startDate", null);
+            payload.put("endDate", null);
+
+            restTemplate.postForObject(url, payload, String.class);
+
+            System.out.println("🎉 관리자 서버로 거래 기록 전송 완료!");
+
+        } catch (Exception e) {
+            System.out.println("❌ 관리자 서버 거래 전송 실패: " + e.getMessage());
+        }
     }
 }
