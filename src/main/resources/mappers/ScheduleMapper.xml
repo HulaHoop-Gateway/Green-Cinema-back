@@ -114,6 +114,27 @@
         LIMIT 1
     </select>
 
+    <!-- ⭐ 특정 스케줄 상세 조회 (영화 정보 포함) -->
+    <select id="selectScheduleByNum" resultMap="scheduleDetailResultMap">
+        SELECT
+        s.schedule_num,
+        s.screening_date,
+        s.screening_num,
+        s.movie_num,
+        f.movie_title,
+        f.running_time,
+        f.audience_rating,
+        t.screening_number,
+        t.branch_num,
+        c.branch_name,
+        c.address
+        FROM T_Schedule s
+        JOIN T_Info f ON s.movie_num = f.movie_num
+        JOIN T_Theater t ON s.screening_num = t.screening_num
+        JOIN T_CinemaFranchise c ON t.branch_num = c.branch_num
+        WHERE s.schedule_num = #{scheduleNum}
+    </select>
+
 
 
 

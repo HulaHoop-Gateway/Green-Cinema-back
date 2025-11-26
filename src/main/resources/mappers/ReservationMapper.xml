@@ -67,6 +67,7 @@
         <result property="state" column="state"/>
         <result property="phoneNumber" column="phone_number"/>
         <result property="scheduleNum" column="schedule_num"/>
+        <result property="bookingGroupId" column="booking_group_id"/>
         <association property="seatDTO" resultMap="seatResultMap"/>
         <association property="userDTO" resultMap="userResultMap"/>
         <association property="scheduleDTO" resultMap="scheduleResultMap"/>
@@ -81,6 +82,7 @@
         r.state,
         r.phone_number,
         r.schedule_num,
+        r.booking_group_id,
 
         s.seat_code,
         s.seat_type,
@@ -133,6 +135,7 @@
         r.state,
         r.phone_number,
         r.schedule_num,
+        r.booking_group_id,
 
         s.seat_code,
         s.seat_type,
@@ -184,14 +187,16 @@
         payment_time,
         state,
         phone_number,
-        schedule_num
+        schedule_num,
+        booking_group_id
         ) VALUES (
         #{reservationNum},
         #{seatNumber},
         #{paymentTime},
         #{state},
         #{phoneNumber},
-        #{scheduleNum}
+        #{scheduleNum},
+        #{bookingGroupId}
         )
     </insert>
 
