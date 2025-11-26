@@ -7,12 +7,13 @@ import com.novacinema.user.model.dto.UserDTO;
 import java.time.LocalDateTime;
 
 public class ReservationDTO {
-    private String reservationNum;       // 예매 고유번호
-    private long seatNumber;             // 좌석 코드
-    private LocalDateTime paymentTime;   // 결제 시간
-    private String state;                // 예약 상태
-    private String phoneNumber;            // 회원 코드 현재 전화번호
-    private int scheduleNum;             // 상영 일정 코드
+    private String reservationNum; // 예매 고유번호
+    private long seatNumber; // 좌석 코드
+    private LocalDateTime paymentTime; // 결제 시간
+    private String state; // 예약 상태
+    private String phoneNumber; // 회원 코드 현재 전화번호
+    private int scheduleNum; // 상영 일정 코드
+    private String bookingGroupId; // ✅ 예약 그룹 ID (다중 좌석 묶음용)
 
     private SeatDTO seatDTO;
     private UserDTO userDTO;
@@ -21,13 +22,16 @@ public class ReservationDTO {
     public ReservationDTO() {
     }
 
-    public ReservationDTO(String reservationNum, long seatNumber, LocalDateTime paymentTime, String state, String phoneNumber, int scheduleNum, SeatDTO seatDTO, UserDTO userDTO, ScheduleDTO scheduleDTO) {
+    public ReservationDTO(String reservationNum, long seatNumber, LocalDateTime paymentTime, String state,
+            String phoneNumber, int scheduleNum, String bookingGroupId, SeatDTO seatDTO, UserDTO userDTO,
+            ScheduleDTO scheduleDTO) {
         this.reservationNum = reservationNum;
         this.seatNumber = seatNumber;
         this.paymentTime = paymentTime;
         this.state = state;
         this.phoneNumber = phoneNumber;
         this.scheduleNum = scheduleNum;
+        this.bookingGroupId = bookingGroupId;
         this.seatDTO = seatDTO;
         this.userDTO = userDTO;
         this.scheduleDTO = scheduleDTO;
@@ -103,5 +107,14 @@ public class ReservationDTO {
 
     public void setScheduleDTO(ScheduleDTO scheduleDTO) {
         this.scheduleDTO = scheduleDTO;
+    }
+
+    // ✅ bookingGroupId getter/setter
+    public String getBookingGroupId() {
+        return bookingGroupId;
+    }
+
+    public void setBookingGroupId(String bookingGroupId) {
+        this.bookingGroupId = bookingGroupId;
     }
 }
