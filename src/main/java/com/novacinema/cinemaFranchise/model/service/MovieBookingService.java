@@ -222,7 +222,7 @@ public class MovieBookingService {
             payload.put("phoneNum", phoneNumber);
             payload.put("merchantCode", merchantCode);
             payload.put("amountUsed", totalAmount); // 총 금액
-            payload.put("status", "R");
+            payload.put("status", "P");
             payload.put("startDate", startDateStr);
             payload.put("endDate", endDateStr);
 
