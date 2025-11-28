@@ -35,5 +35,16 @@
         FROM T_MemberInfo
     </select>
 
-</mapper>
+    <!-- 전화번호로 회원 조회 -->
+    <select id="findByPhoneNumber" resultMap="userResultMap">
+        SELECT
+            member_code,
+            member_name,
+            id,
+            password,
+            phone_number
+        FROM T_MemberInfo
+        WHERE phone_number = #{phoneNumber}
+    </select>
 
+</mapper>
