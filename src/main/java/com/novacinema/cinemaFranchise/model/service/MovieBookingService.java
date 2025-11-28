@@ -8,6 +8,8 @@ import com.novacinema.reservation.model.dto.ReservationDTO;
 import com.novacinema.reservationCRUD.service.ReservationCRUDService;
 import com.novacinema.schedule.model.dao.ScheduleMapper;
 import com.novacinema.schedule.model.dto.ScheduleDTO;
+import com.novacinema.user.model.dao.UserMapper;
+import com.novacinema.user.model.dto.UserDTO;
 import com.novacinema.seat.model.dto.SeatDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,15 +34,18 @@ public class MovieBookingService {
     private final ScheduleMapper scheduleMapper;
     private final SeatReservationService seatReservationService;
     private final ReservationCRUDService reservationCRUDService;
+    private final UserMapper userMapper;
 
     public MovieBookingService(CinemaFranchiseMapper cinemaFranchiseMapper,
             ScheduleMapper scheduleMapper,
             SeatReservationService seatReservationService,
-            ReservationCRUDService reservationCRUDService) {
+            ReservationCRUDService reservationCRUDService,
+            UserMapper userMapper) {
         this.cinemaFranchiseMapper = cinemaFranchiseMapper;
         this.scheduleMapper = scheduleMapper;
         this.seatReservationService = seatReservationService;
         this.reservationCRUDService = reservationCRUDService;
+        this.userMapper = userMapper;
     }
 
     public Map<String, Object> processIntent(String intent, Map<String, Object> data) {
@@ -166,6 +171,14 @@ public class MovieBookingService {
                     // 관리자 서버로 전송 (총 금액)
                     sendTransactionToAdminServer(phoneNumber, scheduleNum, totalAmount);
                     result.put("message", "관리자 서버 전송 완료");
+                    break;
+                }
+
+                // 회원 확인
+                case "member_check": {
+                    String phoneNumber = String.valueOf(data.get("phone"));
+                    UserDTO user = userMapper.findByPhoneNumber(phoneNumber);
+                    result.put("exists", user != null);
                     break;
                 }
 
