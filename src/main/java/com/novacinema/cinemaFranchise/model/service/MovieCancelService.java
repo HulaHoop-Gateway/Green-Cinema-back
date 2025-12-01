@@ -110,16 +110,20 @@ public class MovieCancelService {
                 }
 
                 // 3️⃣ 실제 예매 취소 처리 + 관리자 서버 취소트랜잭션 INSERT (그룹 단위)
+                case "movie_cancel": // ✅ Admin 서버 요청 (Gateway)
                 case "movie_cancel_step3": {
-                    String reservationNum = String.valueOf(data.get("reservationNum"));
+                    ReservationDTO reservation = null;
 
-                    if (reservationNum == null || reservationNum.trim().isEmpty()) {
-                        result.put("error", "예매 번호가 유효하지 않습니다.");
-                        break;
+                    // 1. transactionNum으로 조회 (Blue-back 요청)
+                    if (data.containsKey("transactionNum")) {
+                        Long transactionNum = Long.parseLong(String.valueOf(data.get("transactionNum")));
+                        reservation = reservationMapper.findByTransactionNum(transactionNum);
                     }
-
-                    // 1️⃣ 예매 상세 정보 가져오기
-                    ReservationDTO reservation = reservationMapper.selectReservationByNum(reservationNum);
+                    // 2. reservationNum으로 조회 (Chatbot 요청)
+                    else if (data.containsKey("reservationNum")) {
+                        String reservationNum = String.valueOf(data.get("reservationNum"));
+                        reservation = reservationMapper.selectReservationByNum(reservationNum);
+                    }
 
                     if (reservation == null) {
                         result.put("message", "❌ 해당 예매 정보를 찾을 수 없습니다.");
@@ -129,6 +133,7 @@ public class MovieCancelService {
                     String phoneNumber = reservation.getPhoneNumber();
                     int scheduleNum = reservation.getScheduleNum();
                     String bookingGroupId = reservation.getBookingGroupId();
+                    Long originalTransactionNum = reservation.getTransactionNum(); // ✅ 원본 트랜잭션 번호
 
                     // 2️⃣ 같은 그룹의 모든 예약 찾기
                     List<ReservationDTO> groupReservations = new ArrayList<>();
@@ -189,6 +194,7 @@ public class MovieCancelService {
                         payload.put("merchantCode", merchantCode);
                         payload.put("amountUsed", totalAmount); // ✅ 전체 금액
                         payload.put("status", "R"); // 취소 코드
+                        payload.put("originalTransactionNum", originalTransactionNum); // ✅ 원본 트랜잭션 번호 추가
                         // ✅ LocalDateTime -> String 변환 (JSON 직렬화 오류 방지)
                         payload.put("startDate", startDate != null ? startDate.toString() : null);
                         payload.put("endDate", endDate != null ? endDate.toString() : null);

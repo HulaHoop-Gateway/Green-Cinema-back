@@ -47,7 +47,7 @@ public class ReservationCRUDService {
         String newState = "취소됨";
 
         int updatedReservation = reservationMapper.updateReservationState(reservationNum, newState); // 🔁 String → int
-        int updatedSeat = seatReservationMapper.updateSeatReservedFlag(reservationNum, false);       // 🔁 String → int
+        int updatedSeat = seatReservationMapper.updateSeatReservedFlag(reservationNum, false); // 🔁 String → int
 
         System.out.println("예약번호: " + reservationNum);
         System.out.println("예매 상태 수정 결과: " + updatedReservation);
@@ -56,6 +56,24 @@ public class ReservationCRUDService {
         return updatedReservation > 0 && updatedSeat > 0;
     }
 
+    /**
+     * 트랜잭션 번호 업데이트 (⭐ 추가)
+     */
+    @Transactional
+    public void updateTransactionNum(String bookingGroupId, Long transactionNum) {
+        int updated = reservationMapper.updateTransactionNum(bookingGroupId, transactionNum);
+        System.out.println("예약 그룹 ID: " + bookingGroupId + ", 트랜잭션 번호 업데이트 결과: " + updated);
+    }
+
+    /**
+     * 트랜잭션 번호 업데이트 (PhoneNumber + ScheduleNum) (⭐ 추가 - Fallback용)
+     */
+    @Transactional
+    public void updateTransactionNumByScheduleAndPhone(String phoneNumber, int scheduleNum, Long transactionNum) {
+        int updated = reservationMapper.updateTransactionNumByScheduleAndPhone(phoneNumber, scheduleNum,
+                transactionNum);
+        System.out.println("핸드폰: " + phoneNumber + ", 스케줄: " + scheduleNum + ", 트랜잭션 번호 업데이트 결과: " + updated);
+    }
 
     /**
      * 오늘 날짜 기준 고유 예매 ID 생성 (형식: yyMMdd0001)

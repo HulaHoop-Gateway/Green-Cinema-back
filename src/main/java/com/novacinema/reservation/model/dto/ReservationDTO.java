@@ -117,4 +117,15 @@ public class ReservationDTO {
     public void setBookingGroupId(String bookingGroupId) {
         this.bookingGroupId = bookingGroupId;
     }
+
+    // ✅ transactionNum getter/setter
+    private Long transactionNum;
+
+    public Long getTransactionNum() {
+        return transactionNum;
+    }
+
+    public void setTransactionNum(Long transactionNum) {
+        this.transactionNum = transactionNum;
+    }
 }
