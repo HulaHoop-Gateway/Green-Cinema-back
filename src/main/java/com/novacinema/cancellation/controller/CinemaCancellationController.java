@@ -22,7 +22,13 @@ public class CinemaCancellationController {
         Map<String, Object> result = new HashMap<>();
 
         try {
-            Integer transactionNum = (Integer) request.get("transactionNum");
+            Long transactionNum = null;
+            if (request.get("transactionNum") instanceof Integer) {
+                transactionNum = ((Integer) request.get("transactionNum")).longValue();
+            } else if (request.get("transactionNum") instanceof Long) {
+                transactionNum = (Long) request.get("transactionNum");
+            }
+
             String memberCode = (String) request.get("memberCode");
 
             if (transactionNum == null || memberCode == null) {
@@ -34,7 +40,7 @@ public class CinemaCancellationController {
             // MovieCancelService의 기존 로직 재사용
             // step3: 실제 취소 처리 + Admin 서버로 취소 트랜잭션 전송
             Map<String, Object> data = new HashMap<>();
-            data.put("reservationNum", String.valueOf(transactionNum));
+            data.put("reservationNum", String.valueOf(transactionNum)); // fallback
             data.put("transactionNum", transactionNum);
 
             Map<String, Object> cancelResult = movieCancelService.processIntent("movie_cancel_step3", data);

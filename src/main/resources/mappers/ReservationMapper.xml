@@ -68,6 +68,7 @@
         <result property="phoneNumber" column="phone_number"/>
         <result property="scheduleNum" column="schedule_num"/>
         <result property="bookingGroupId" column="booking_group_id"/>
+        <result property="transactionNum" column="transaction_num"/> <!-- ✅ 추가 -->
         <association property="seatDTO" resultMap="seatResultMap"/>
         <association property="userDTO" resultMap="userResultMap"/>
         <association property="scheduleDTO" resultMap="scheduleResultMap"/>
@@ -83,6 +84,7 @@
         r.phone_number,
         r.schedule_num,
         r.booking_group_id,
+        r.transaction_num,
 
         s.seat_code,
         s.seat_type,
@@ -136,6 +138,7 @@
         r.phone_number,
         r.schedule_num,
         r.booking_group_id,
+        r.transaction_num,
 
         s.seat_code,
         s.seat_type,
@@ -188,7 +191,8 @@
         state,
         phone_number,
         schedule_num,
-        booking_group_id
+        booking_group_id,
+        transaction_num
         ) VALUES (
         #{reservationNum},
         #{seatNumber},
@@ -196,7 +200,8 @@
         #{state},
         #{phoneNumber},
         #{scheduleNum},
-        #{bookingGroupId}
+        #{bookingGroupId},
+        #{transactionNum}
         )
     </insert>
 
@@ -221,6 +226,7 @@
         r.state,
         r.phone_number,
         r.schedule_num,
+        r.transaction_num,
 
         s.seat_code,
         s.seat_type,
@@ -263,6 +269,77 @@
 
         WHERE r.reservation_num = #{reservationNum}
     </select>
+
+    <!-- 🔍 트랜잭션 번호로 예매 조회 (⭐ 추가) -->
+    <select id="findByTransactionNum" parameterType="long" resultMap="reservationInfoDetailResultMap">
+        SELECT
+        r.reservation_num,
+        r.seat_number,
+        r.payment_time,
+        r.state,
+        r.phone_number,
+        r.schedule_num,
+        r.booking_group_id,
+        r.transaction_num,
+
+        s.seat_code,
+        s.seat_type,
+        s.price,
+        s.screening_num,
+        s.is_aisle,
+        s.row_label,
+        s.col_num,
+
+        m.member_code,
+        m.member_name,
+        m.id,
+        m.password,
+        m.phone_number,
+
+        sc.schedule_num,
+        sc.screening_date,
+        sc.screening_num,
+        sc.movie_num,
+
+        i.movie_num,
+        i.movie_title,
+        i.running_time,
+        i.audience_rating,
+
+        th.screening_num AS th_screening_num,
+        th.screening_number,
+        th.branch_num,
+
+        cf.branch_name,
+        cf.address
+
+        FROM T_ReservationInfo r
+        JOIN T_Seat s ON r.seat_number = s.seat_code
+        JOIN T_MemberInfo m ON r.phone_number = m.phone_number
+        JOIN T_Schedule sc ON r.schedule_num = sc.schedule_num
+        JOIN T_Info i ON sc.movie_num = i.movie_num
+        JOIN T_Theater th ON sc.screening_num = th.screening_num
+        JOIN T_CinemaFranchise cf ON th.branch_num = cf.branch_num
+
+        WHERE r.transaction_num = #{transactionNum}
+    </select>
+
+    <!-- 🔄 트랜잭션 번호 업데이트 (⭐ 추가) -->
+    <update id="updateTransactionNum">
+        UPDATE T_ReservationInfo
+        SET transaction_num = #{transactionNum}
+        WHERE booking_group_id = #{bookingGroupId}
+    </update>
+
+    <!-- 🔄 트랜잭션 번호 업데이트 (PhoneNumber + ScheduleNum) (⭐ 추가) -->
+    <update id="updateTransactionNumByScheduleAndPhone">
+        UPDATE T_ReservationInfo
+        SET transaction_num = #{transactionNum}
+        WHERE phone_number = #{phoneNumber}
+          AND schedule_num = #{scheduleNum}
+          AND state = '예매완료'
+          AND transaction_num IS NULL
+    </update>
 
 
 </mapper>
