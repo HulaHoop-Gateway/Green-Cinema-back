@@ -195,9 +195,12 @@ public class MovieCancelService {
                         payload.put("amountUsed", totalAmount); // ✅ 전체 금액
                         payload.put("status", "R"); // 취소 코드
                         payload.put("originalTransactionNum", originalTransactionNum); // ✅ 원본 트랜잭션 번호 추가
-                        // ✅ LocalDateTime -> String 변환 (JSON 직렬화 오류 방지)
-                        payload.put("startDate", startDate != null ? startDate.toString() : null);
-                        payload.put("endDate", endDate != null ? endDate.toString() : null);
+
+                        // ✅ LocalDateTime -> String 변환 (Format 맞추기: yyyy-MM-dd HH:mm:ss)
+                        java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter
+                                .ofPattern("yyyy-MM-dd HH:mm:ss");
+                        payload.put("startDate", startDate != null ? startDate.format(formatter) : null);
+                        payload.put("endDate", endDate != null ? endDate.format(formatter) : null);
 
                         restTemplate.postForObject(url, payload, String.class);
 
