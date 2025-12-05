@@ -117,7 +117,10 @@ public class MovieCancelService {
                     // 1. transactionNum으로 조회 (Blue-back 요청)
                     if (data.containsKey("transactionNum")) {
                         Long transactionNum = Long.parseLong(String.valueOf(data.get("transactionNum")));
-                        reservation = reservationMapper.findByTransactionNum(transactionNum);
+                        List<ReservationDTO> reservations = reservationMapper.findByTransactionNum(transactionNum);
+                        if (reservations != null && !reservations.isEmpty()) {
+                            reservation = reservations.get(0); // 첫 번째 예약 정보 사용 (그룹 정보는 동일하므로)
+                        }
                     }
                     // 2. reservationNum으로 조회 (Chatbot 요청)
                     else if (data.containsKey("reservationNum")) {
