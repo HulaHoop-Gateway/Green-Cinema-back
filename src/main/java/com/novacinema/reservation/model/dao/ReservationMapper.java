@@ -29,7 +29,7 @@ public interface ReservationMapper {
         String findMaxReservationIdForToday(@Param("prefix") String prefix);
 
         // 트랜잭션 번호로 예매 조회 (⭐ 추가)
-        ReservationDTO findByTransactionNum(@Param("transactionNum") Long transactionNum);
+        List<ReservationDTO> findByTransactionNum(@Param("transactionNum") Long transactionNum);
 
         // 트랜잭션 번호 업데이트 (⭐ 추가)
         int updateTransactionNum(@Param("bookingGroupId") String bookingGroupId,
