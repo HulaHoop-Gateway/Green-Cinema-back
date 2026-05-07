@@ -1,9 +1,20 @@
 package com.novacinema.user.model.dto;
+// 사용자(회원) 정보를 담아 계층 간 데이터를 전달하는 데이터 전송 객체
+// 데이터베이스의 T_Member 테이블 구조와 매핑되어 로그인 및 사용자 조회 시 활용된다
 public class UserDTO {
+    // 내부 시스템에서 사용자를 식별하는 고유 코드
     private String memberCode;
+    
+    // 회원 이름
     private String memberName;
+    
+    // 로그인 아이디
     private String id;
+    
+    // 비밀번호
     private String password;
+    
+    // 핸드폰 번호
     private String phoneNumber;
 
     public UserDTO() {}

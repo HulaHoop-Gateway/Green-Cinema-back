@@ -24,14 +24,14 @@ public class MovieController {
         this.movieCancelService = movieCancelService;
     }
 
-    // 🎬 Movie intent 처리
+    // 챗봇 등 외부로부터 전달된 영화 관련 의도(Intent) 데이터를 파싱하여 적절한 서비스 로직으로 분기한다
     @PostMapping("/dispatch")
     public ResponseEntity<Map<String, Object>> handleIntent(@RequestBody IntentPayLoadDTO payload) {
         String intent = payload.getIntent();
         Map<String, Object> data = payload.getData();
 
-        log.info("🎬 [MovieController] intent: {}", intent);
-        log.info("🎬 [MovieController] data: {}", data);
+        log.info("[MovieController] intent: {}", intent);
+        log.info("[MovieController] data: {}", data);
 
         Map<String, Object> result;
 

@@ -4,7 +4,7 @@ import com.novacinema.SeatReservationId.model.dto.SeatReservationDTO;
 import com.novacinema.SeatReservationId.model.service.SeatReservationService;
 import com.novacinema.cinemaFranchise.model.dao.CinemaFranchiseMapper;
 import com.novacinema.cinemaFranchise.model.dto.CinemaFranchiseDTO;
-import com.novacinema.reservation.model.dao.ReservationMapper; // ✅ 추가
+import com.novacinema.reservation.model.dao.ReservationMapper; // 추가
 import com.novacinema.reservation.model.dto.ReservationDTO;
 import com.novacinema.reservationCRUD.service.ReservationCRUDService;
 import com.novacinema.schedule.model.dao.ScheduleMapper;
@@ -26,6 +26,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+// 챗봇 기반 영화 예매 플로우의 각 단계를 처리하고, 관리자 서버와의 통신을 수행하는 서비스
 @Service
 public class MovieBookingService {
 
@@ -36,20 +37,20 @@ public class MovieBookingService {
     private final SeatReservationService seatReservationService;
     private final ReservationCRUDService reservationCRUDService;
     private final UserMapper userMapper;
-    private final ReservationMapper reservationMapper; // ✅ 추가
+    private final ReservationMapper reservationMapper; // 추가
 
     public MovieBookingService(CinemaFranchiseMapper cinemaFranchiseMapper,
             ScheduleMapper scheduleMapper,
             SeatReservationService seatReservationService,
             ReservationCRUDService reservationCRUDService,
             UserMapper userMapper,
-            ReservationMapper reservationMapper) { // ✅ 추가
+            ReservationMapper reservationMapper) { // 추가
         this.cinemaFranchiseMapper = cinemaFranchiseMapper;
         this.scheduleMapper = scheduleMapper;
         this.seatReservationService = seatReservationService;
         this.reservationCRUDService = reservationCRUDService;
         this.userMapper = userMapper;
-        this.reservationMapper = reservationMapper; // ✅ 추가
+        this.reservationMapper = reservationMapper; // 추가
     }
 
     public Map<String, Object> processIntent(String intent, Map<String, Object> data) {
@@ -136,7 +137,7 @@ public class MovieBookingService {
                     int scheduleNum = Integer.parseInt(String.valueOf(data.get("scheduleNum")));
                     int seatCode = Integer.parseInt(String.valueOf(data.get("seatCode")));
                     String phoneNumber = String.valueOf(data.get("phoneNumber"));
-                    String bookingGroupId = String.valueOf(data.get("bookingGroupId")); // ✅ 그룹ID 추출
+                    String bookingGroupId = String.valueOf(data.get("bookingGroupId")); // 그룹ID 추출
 
                     ReservationDTO reservationDTO = new ReservationDTO();
                     reservationDTO.setScheduleNum(scheduleNum);
@@ -144,7 +145,7 @@ public class MovieBookingService {
                     reservationDTO.setSeatNumber(seatCode);
                     reservationDTO.setState("예매완료");
                     reservationDTO.setPaymentTime(LocalDateTime.now());
-                    reservationDTO.setBookingGroupId(bookingGroupId); // ✅ 그룹ID 설정
+                    reservationDTO.setBookingGroupId(bookingGroupId); // 그룹ID 설정
 
                     SeatReservationDTO seatReservationDTO = new SeatReservationDTO();
                     seatReservationDTO.setScheduleNum(scheduleNum);
@@ -154,9 +155,9 @@ public class MovieBookingService {
 
                     try {
                         reservationCRUDService.reserveSeatAndInsertReservation(reservationDTO, seatReservationDTO);
-                        // ❌ 개별 좌석 예약 시에는 관리자 서버 전송 안 함 (일괄 전송으로 변경)
+                        // 개별 좌석 예약 시에는 관리자 서버 전송을 생략하고 일괄 전송 단계에서 처리한다
                         // sendTransactionToAdminServer(phoneNumber, scheduleNum, seatCode);
-                        result.put("message", "🎉 예매가 완료되었습니다!");
+                        result.put("message", "예매가 완료되었습니다!");
                     } catch (RuntimeException e) {
                         result.put("error", "예매 처리 중 오류 발생: " + e.getMessage());
                     } catch (Exception e) {
@@ -166,12 +167,12 @@ public class MovieBookingService {
                     break;
                 }
 
-                // ⭐ 5️⃣ 예매 확정 후 관리자 서버 전송 (일괄 처리)
+                // 예매 확정 후 전체 금액에 대해 관리자 서버로 결제 내역을 일괄 전송한다
                 case "movie_booking_finalize": {
                     int scheduleNum = Integer.parseInt(String.valueOf(data.get("scheduleNum")));
                     String phoneNumber = String.valueOf(data.get("phoneNumber"));
                     int totalAmount = Integer.parseInt(String.valueOf(data.get("totalAmount")));
-                    String bookingGroupId = String.valueOf(data.get("bookingGroupId")); // ✅ 그룹ID 추출
+                    String bookingGroupId = String.valueOf(data.get("bookingGroupId")); // 그룹ID 추출
 
                     // 관리자 서버로 전송 (총 금액) 및 transaction_num 반환
                     Long transactionNum = sendTransactionToAdminServer(phoneNumber, scheduleNum, totalAmount);
@@ -183,7 +184,7 @@ public class MovieBookingService {
                         } else {
                             // 2. bookingGroupId가 없으면 (Fallback) PhoneNumber + ScheduleNum으로 업데이트
                             log.warn(
-                                    "⚠️ bookingGroupId 누락됨. PhoneNumber + ScheduleNum으로 업데이트 시도: phoneNumber={}, scheduleNum={}",
+                                    "bookingGroupId 누락됨. PhoneNumber + ScheduleNum으로 업데이트 시도: phoneNumber={}, scheduleNum={}",
                                     phoneNumber, scheduleNum);
                             reservationCRUDService.updateTransactionNumByScheduleAndPhone(phoneNumber, scheduleNum,
                                     transactionNum);
@@ -221,15 +222,15 @@ public class MovieBookingService {
 
             String url = "http://localhost:8000/api/transactions/add";
 
-            // ⭐ scheduleNum → merchant_code 조회
+            // scheduleNum → merchant_code 조회
             String merchantCode = scheduleMapper.findMerchantCodeByScheduleNum(scheduleNum);
 
             if (merchantCode == null || merchantCode.isEmpty()) {
-                log.error("❌ merchantCode 조회 실패: scheduleNum={}", scheduleNum);
+                log.error("merchantCode 조회 실패: scheduleNum={}", scheduleNum);
                 return null;
             }
 
-            // ⭐ 스케줄 정보 조회 (종료 시간 계산용)
+            // 스케줄 정보 조회 (종료 시간 계산용)
             ScheduleDTO schedule = scheduleMapper.selectScheduleByNum(scheduleNum);
             LocalDateTime startDate = null;
             LocalDateTime endDate = null;
@@ -244,13 +245,13 @@ public class MovieBookingService {
                 }
             }
 
-            // ⭐ 날짜 포맷팅 (yyyy-MM-dd HH:mm:ss)
+            // 날짜 포맷팅 (yyyy-MM-dd HH:mm:ss)
             java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter
                     .ofPattern("yyyy-MM-dd HH:mm:ss");
             String startDateStr = startDate != null ? startDate.format(formatter) : null;
             String endDateStr = endDate != null ? endDate.format(formatter) : null;
 
-            // ⭐ 관리자 서버 JSON 규칙에 맞게 camelCase 사용
+            // 관리자 서버 JSON 규칙에 맞게 camelCase 사용
             Map<String, Object> payload = new HashMap<>();
             payload.put("phoneNum", phoneNumber);
             payload.put("merchantCode", merchantCode);
@@ -259,34 +260,34 @@ public class MovieBookingService {
             payload.put("startDate", startDateStr);
             payload.put("endDate", endDateStr);
 
-            log.info("📤 관리자 서버로 거래 기록 전송 시도: url={}, payload={}", url, payload);
+            log.info("관리자 서버로 거래 기록 전송 시도: url={}, payload={}", url, payload);
 
             // Admin 서버 응답에서 transaction_num 추출
             @SuppressWarnings("unchecked")
             Map<String, Object> response = restTemplate.postForObject(url, payload, Map.class);
-            log.info("✅ 관리자 서버 응답: {}", response);
+            log.info("관리자 서버 응답: {}", response);
 
             if (response != null && response.get("transaction") != null) {
                 @SuppressWarnings("unchecked")
                 Map<String, Object> transaction = (Map<String, Object>) response.get("transaction");
                 Object tNumObj = transaction.get("transactionNum");
                 Long transactionNum = (tNumObj instanceof Number) ? ((Number) tNumObj).longValue() : null;
-                log.info("🎬 영화 매출 전송 완료: {}원, transaction_num: {}", totalAmount, transactionNum);
+                log.info("영화 매출 전송 완료: {}원, transaction_num: {}", totalAmount, transactionNum);
                 return transactionNum;
             } else {
-                log.warn("⚠️ Admin 서버 응답에 transaction 객체 없음: {}", response);
+                log.warn("Admin 서버 응답에 transaction 객체 없음: {}", response);
                 return null;
             }
 
         } catch (HttpClientErrorException | HttpServerErrorException e) {
-            log.error("❌ 관리자 서버 거래 전송 실패 (HTTP {}): status={}, response={}",
+            log.error("관리자 서버 거래 전송 실패 (HTTP {}): status={}, response={}",
                     e.getStatusCode(), e.getStatusCode().value(), e.getResponseBodyAsString(), e);
             return null;
         } catch (RestClientException e) {
-            log.error("❌ 관리자 서버 거래 전송 실패 (네트워크 오류): message={}", e.getMessage(), e);
+            log.error("관리자 서버 거래 전송 실패 (네트워크 오류): message={}", e.getMessage(), e);
             return null;
         } catch (Exception e) {
-            log.error("❌ 관리자 서버 거래 전송 실패 (예상치 못한 오류): message={}", e.getMessage(), e);
+            log.error("관리자 서버 거래 전송 실패 (예상치 못한 오류): message={}", e.getMessage(), e);
             return null;
         }
     }

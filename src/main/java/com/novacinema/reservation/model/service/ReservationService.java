@@ -17,17 +17,17 @@ public class ReservationService {
         this.reservationMapper = reservationMapper;
     }
 
-    /** ✅ 전체 예약 조회 */
+    // 데이터베이스에 저장된 전체 예약 내역을 리스트 형태로 반환한다
     public List<ReservationDTO> getAllReservations() {
         return reservationMapper.selectAllReservations();
     }
 
-    /** ✅ 핸드폰 번호 기준 예약 내역 조회 */
+    // 특정 핸드폰 번호로 등록된 모든 예약 내역을 조회한다
     public List<ReservationDTO> getReservationsByPhoneNumber(String phoneNumber) {
         return reservationMapper.selectReservationsByPhoneNumber(phoneNumber);
     }
 
-    /** ✅ 핸드폰 번호 기준 예약 내역 조회 (booking_group_id로 그룹화) */
+    // 예약 내역을 결제 그룹(booking_group_id) 기준으로 묶고, 결제 시간에 따라 최신순으로 정렬하여 반환한다
     public List<GroupedReservationDTO> getGroupedReservationsByPhoneNumber(String phoneNumber) {
         List<ReservationDTO> reservations = reservationMapper.selectReservationsByPhoneNumber(phoneNumber);
 
@@ -89,7 +89,7 @@ public class ReservationService {
         return groupedList;
     }
 
-    /** ✅ 예약 등록 */
+    // 새로운 예약 정보를 데이터베이스에 삽입하고 정상 등록 여부를 불리언 값으로 반환한다
     public boolean registerReservation(ReservationDTO dto) {
         int result = reservationMapper.insertReservation(dto);
         return result > 0;
