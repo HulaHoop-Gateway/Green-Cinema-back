@@ -15,13 +15,14 @@ public class CinemaFranchiseController {
     public CinemaFranchiseController(CinemaFranchiseService cinemaFranchiseService){
         this.cinemaFranchiseService=cinemaFranchiseService;
     }
-    /*db에서 얻어온 값  전달*/
+    // 영화관 지점 목록 조회 API 메인 진입점
+    // DB에 저장된 전체 지점 데이터를 DTO 리스트 형태로 반환한다
     @GetMapping("/list")
     public ResponseEntity<List<CinemaFranchiseDTO>> getCinemaFranchiseList() {
         List<CinemaFranchiseDTO> franchiseList = cinemaFranchiseService.getAllCinemaFranchises();
         return ResponseEntity.ok(franchiseList);
     }
-    /*post방식으로 수신*/
+    // 폼 데이터 방식(x-www-form-urlencoded)으로 지점 정보를 수신하여 확인하는 테스트용 엔드포인트
     @PostMapping("/list1")
     public ResponseEntity<String> receiveForm(CinemaFranchiseDTO cinemaFranchiseDTO) {
         System.out.println("8082지점 번호: " + cinemaFranchiseDTO.getBranchNum());
@@ -34,7 +35,7 @@ public class CinemaFranchiseController {
                         "주소: " + cinemaFranchiseDTO.getAddress()
         );
     }
-    /*json방식으로 수신*/
+    // 클라이언트로부터 JSON 형식의 지점 정보를 전달받아 데이터 매핑을 확인하는 엔드포인트
     @PostMapping("/list2")
     public ResponseEntity<CinemaFranchiseDTO> receiveCinemaData(@RequestBody CinemaFranchiseDTO cinemaFranchiseDTO) {
         System.out.println("8082지점 번호: " + cinemaFranchiseDTO.getBranchNum());
@@ -44,7 +45,7 @@ public class CinemaFranchiseController {
         return ResponseEntity.ok(cinemaFranchiseDTO
         );
     }
-    /*db에서 얻어온 값  전달*/
+    // 전체 영화관 지점 목록을 조회하고, 콘솔에 조회된 지점 수를 로깅한 뒤 반환한다
     @GetMapping("/list3")
     public ResponseEntity<List<CinemaFranchiseDTO>> getCinemaFranchiseList3() {
         List<CinemaFranchiseDTO> franchiseList = cinemaFranchiseService.getAllCinemaFranchises();
@@ -52,7 +53,7 @@ public class CinemaFranchiseController {
 
         return ResponseEntity.ok(franchiseList);
     }
-    /*json방식으로 수신후 DB추가*/
+    // 신규 영화관 지점 정보를 JSON 형태로 전달받아 서비스 계층을 통해 DB에 등록한다
     @PostMapping("/add")
     public ResponseEntity<CinemaFranchiseDTO> receiveCinemaData4(@RequestBody CinemaFranchiseDTO cinemaFranchiseDTO) {
         System.out.println("8082지점 번호: " + cinemaFranchiseDTO.getBranchNum());

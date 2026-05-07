@@ -20,9 +20,7 @@ public class ReservationCRUDService {
     @Autowired
     private SeatReservationMapper seatReservationMapper;
 
-    /**
-     * 예매 및 좌석 예약 처리 (예매 ID 자동 생성 포함)
-     */
+    // 고유 예매 ID를 생성한 뒤 예매 내역과 좌석 예약 내역을 데이터베이스에 반영한다
     @Transactional
     public void reserveSeatAndInsertReservation(ReservationDTO reservationDTO, SeatReservationDTO seatReservationDTO) {
         // 1. 고유 예매 ID 생성
@@ -39,15 +37,13 @@ public class ReservationCRUDService {
         seatReservationMapper.insertSeatReservation(seatReservationDTO);
     }
 
-    /**
-     * 예매 상태 및 좌석 예약 상태 변경 (예매 취소)
-     */
+    // 특정 예약 번호에 대해 예매 상태를 취소로 변경하고, 연결된 좌석의 예약 상태를 해제한다
     @Transactional
     public boolean updateReservationState(String reservationNum) {
         String newState = "취소됨";
 
-        int updatedReservation = reservationMapper.updateReservationState(reservationNum, newState); // 🔁 String → int
-        int updatedSeat = seatReservationMapper.updateSeatReservedFlag(reservationNum, false); // 🔁 String → int
+        int updatedReservation = reservationMapper.updateReservationState(reservationNum, newState); // String → int
+        int updatedSeat = seatReservationMapper.updateSeatReservedFlag(reservationNum, false); // String → int
 
         System.out.println("예약번호: " + reservationNum);
         System.out.println("예매 상태 수정 결과: " + updatedReservation);
@@ -56,18 +52,14 @@ public class ReservationCRUDService {
         return updatedReservation > 0 && updatedSeat > 0;
     }
 
-    /**
-     * 트랜잭션 번호 업데이트 (⭐ 추가)
-     */
+    // 결제 그룹 단위로 관리자 서버와의 통신에 사용될 트랜잭션 번호를 갱신한다
     @Transactional
     public void updateTransactionNum(String bookingGroupId, Long transactionNum) {
         int updated = reservationMapper.updateTransactionNum(bookingGroupId, transactionNum);
         System.out.println("예약 그룹 ID: " + bookingGroupId + ", 트랜잭션 번호 업데이트 결과: " + updated);
     }
 
-    /**
-     * 트랜잭션 번호 업데이트 (PhoneNumber + ScheduleNum) (⭐ 추가 - Fallback용)
-     */
+    // 결제 그룹 ID가 없는 예외 상황에서 전화번호와 스케줄 번호를 기준으로 트랜잭션 번호를 갱신한다
     @Transactional
     public void updateTransactionNumByScheduleAndPhone(String phoneNumber, int scheduleNum, Long transactionNum) {
         int updated = reservationMapper.updateTransactionNumByScheduleAndPhone(phoneNumber, scheduleNum,
@@ -75,9 +67,7 @@ public class ReservationCRUDService {
         System.out.println("핸드폰: " + phoneNumber + ", 스케줄: " + scheduleNum + ", 트랜잭션 번호 업데이트 결과: " + updated);
     }
 
-    /**
-     * 오늘 날짜 기준 고유 예매 ID 생성 (형식: yyMMdd0001)
-     */
+    // 현재 날짜(yyMMdd)를 접두사로 사용하여 순차적으로 증가하는 고유 예매 ID를 생성한다
     private String generateReservationId() {
         String today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyMMdd")); // 예: 251106
         String prefix = today;

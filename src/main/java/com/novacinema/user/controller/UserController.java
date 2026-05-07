@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+// 회원(사용자) 정보 조회 요청을 처리하는 컨트롤러 창구
 @RestController
 @RequestMapping("/user")
 @CrossOrigin(origins = "http://localhost:5173")
@@ -22,7 +23,7 @@ public class UserController {
         this.userService = userService;
     }
 
-    /*db에서 얻어온 값  전달*/
+    // 데이터베이스에 등록된 전체 사용자 목록을 조회하여 클라이언트에 반환한다
     @GetMapping("/list")
     public ResponseEntity<List<UserDTO>> getUserDTOList() {
         List<UserDTO> userDTOList = userService.getAllUsers();

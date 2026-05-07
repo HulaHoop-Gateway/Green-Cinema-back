@@ -6,17 +6,37 @@ import com.novacinema.user.model.dto.UserDTO;
 
 import java.time.LocalDateTime;
 
+// 고객의 단일 좌석 예매 정보를 담는 데이터 전송 객체
+// 데이터베이스의 T_Reservation 테이블과 매핑되며, 예약 관리에 필요한 식별자와 상태 값을 포함한다
 public class ReservationDTO {
-    private String reservationNum; // 예매 고유번호
-    private long seatNumber; // 좌석 코드
-    private LocalDateTime paymentTime; // 결제 시간
-    private String state; // 예약 상태
-    private String phoneNumber; // 회원 코드 현재 전화번호
-    private int scheduleNum; // 상영 일정 코드
-    private String bookingGroupId; // ✅ 예약 그룹 ID (다중 좌석 묶음용)
+    // 예매를 식별하기 위해 채번된 고유 예매 번호 (예: 2511060001)
+    private String reservationNum; 
+    
+    // 고객이 선택한 좌석의 내부 식별 코드
+    private long seatNumber; 
+    
+    // 예매(결제)가 정상적으로 완료된 시간
+    private LocalDateTime paymentTime; 
+    
+    // 현재 예매의 진행 상태 (예: '예매완료', '취소됨' 등)
+    private String state; 
+    
+    // 예매를 진행한 고객의 핸드폰 번호 (비회원 조회 및 알림 등에 활용)
+    private String phoneNumber; 
+    
+    // 예매한 영화의 구체적인 상영 일정 고유 번호 (외래키)
+    private int scheduleNum; 
+    
+    // 여러 좌석을 동시에 결제했을 때, 이들을 묶어주는 논리적인 결제 단위 그룹 ID
+    private String bookingGroupId; 
 
+    // 예약된 좌석의 상세 위치(행, 열 등) 정보를 포함하는 연관 DTO
     private SeatDTO seatDTO;
+    
+    // 예약자(회원)의 상세 정보를 포함하는 연관 DTO
     private UserDTO userDTO;
+    
+    // 예약된 영화의 상영 시간, 상영관, 지점 정보를 모두 포함하는 연관 DTO
     private ScheduleDTO scheduleDTO;
 
     public ReservationDTO() {
@@ -109,7 +129,7 @@ public class ReservationDTO {
         this.scheduleDTO = scheduleDTO;
     }
 
-    // ✅ bookingGroupId getter/setter
+    // 연관된 여러 좌석 예약을 하나로 묶기 위한 bookingGroupId의 getter/setter
     public String getBookingGroupId() {
         return bookingGroupId;
     }
@@ -118,7 +138,7 @@ public class ReservationDTO {
         this.bookingGroupId = bookingGroupId;
     }
 
-    // ✅ transactionNum getter/setter
+    // 관리자 서버(외부 시스템)와의 통신에서 발급받은 결제 트랜잭션 번호의 getter/setter
     private Long transactionNum;
 
     public Long getTransactionNum() {

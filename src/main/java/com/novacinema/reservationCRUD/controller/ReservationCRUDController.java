@@ -14,9 +14,7 @@ public class ReservationCRUDController {
     @Autowired
     private ReservationCRUDService reservationCRUDService;
 
-    /**
-     * 예매 및 좌석 예약을 동시에 처리하는 엔드포인트
-     */
+    // 예매와 좌석 예약 데이터를 동시에 전달받아 하나의 트랜잭션으로 처리하는 엔드포인트
 //    @PostMapping("/insert")
 //    public ResponseEntity<String> insertReservation(
 //            @RequestBody ReservationRequest request
@@ -60,9 +58,7 @@ public class ReservationCRUDController {
 
 
 
-    /**
-     * 클라이언트에서 두 DTO를 함께 전달받기 위한 래퍼 클래스
-     */
+    // 클라이언트로부터 예매 정보와 좌석 예약 정보를 한 번에 매핑하기 위한 래퍼 클래스
     public static class ReservationRequest {
         private ReservationDTO reservationDTO;
         private SeatReservationDTO seatReservationDTO;

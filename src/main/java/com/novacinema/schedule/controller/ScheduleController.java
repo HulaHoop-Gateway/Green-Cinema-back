@@ -16,7 +16,7 @@ public class ScheduleController {
         this.scheduleService = scheduleService;
     }
 
-    /*db에서 얻어온 값  전달*/
+    // 데이터베이스에 등록된 전체 영화 상영 일정(스케줄) 데이터를 조회하여 클라이언트에 반환한다
     @GetMapping("/list")
     public ResponseEntity<List<ScheduleDTO>> getCinemaScheduleDTOList() {
         List<ScheduleDTO> scheduleDTOS = scheduleService.getAllSchedules();

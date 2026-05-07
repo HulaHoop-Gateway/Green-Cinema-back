@@ -12,24 +12,25 @@ import org.springframework.web.client.RestTemplate;
 import java.util.*;
 import java.util.stream.Collectors;
 
+// 챗봇 기반 영화 예매 취소 플로우의 각 단계를 처리하고, 관리자 서버와의 통신을 수행하는 서비스
 @Service
 public class MovieCancelService {
 
     private final ReservationMapper reservationMapper;
     private final ReservationCRUDService reservationCRUDService;
-    private final ScheduleMapper scheduleMapper; // ⭐ 추가됨
-    private final ReservationService reservationService; // ⭐ 그룹화용
+    private final ScheduleMapper scheduleMapper;
+    private final ReservationService reservationService;
 
     public MovieCancelService(
             ReservationMapper reservationMapper,
             ReservationCRUDService reservationCRUDService,
-            ScheduleMapper scheduleMapper, // ⭐ 추가됨
-            ReservationService reservationService // ⭐ 그룹화용
+            ScheduleMapper scheduleMapper,
+            ReservationService reservationService
     ) {
         this.reservationMapper = reservationMapper;
         this.reservationCRUDService = reservationCRUDService;
-        this.scheduleMapper = scheduleMapper; // ⭐ 추가됨
-        this.reservationService = reservationService; // ⭐ 그룹화용
+        this.scheduleMapper = scheduleMapper;
+        this.reservationService = reservationService;
     }
 
     public Map<String, Object> processIntent(String intent, Map<String, Object> data) {
@@ -38,7 +39,7 @@ public class MovieCancelService {
         try {
             switch (intent) {
 
-                // 1️⃣ 취소 가능한 예매 목록 조회 (그룹화)
+                // 취소 가능한 예매 목록을 사용자 그룹별로 묶어서 조회한다
                 case "movie_cancel_step1": {
                     String phoneNumber = String.valueOf(data.get("phoneNumber"));
 
@@ -58,7 +59,7 @@ public class MovieCancelService {
                             .collect(Collectors.toList());
 
                     if (cancelableReservations.isEmpty()) {
-                        result.put("message", "📭 취소 가능한 예매 내역이 없습니다.");
+                        result.put("message", "취소 가능한 예매 내역이 없습니다.");
                     } else {
                         List<Map<String, Object>> reservationList = cancelableReservations.stream().map(r -> {
                             Map<String, Object> m = new HashMap<>();
@@ -68,7 +69,7 @@ public class MovieCancelService {
                             m.put("screeningDate", r.getScheduleDTO().getScreeningDate());
                             m.put("branchName",
                                     r.getScheduleDTO().getTheaterInfo().getCinemaFranchisedto().getBranchName());
-                            m.put("seatLabels", r.getSeatLabels()); // ✅ 그룹화된 좌석 리스트
+                            m.put("seatLabels", r.getSeatLabels()); // 그룹화된 좌석 리스트
                             m.put("seatCodes", r.getSeatCodes());
                             return m;
                         }).collect(Collectors.toList());
@@ -78,12 +79,12 @@ public class MovieCancelService {
                     break;
                 }
 
-                // 2️⃣ 예매 선택 확인
+                // 클라이언트가 선택한 특정 예매 내역의 상세 정보를 조회하여 반환한다
                 case "movie_cancel_step2": {
                     String reservationNum = String.valueOf(data.get("reservationNum"));
 
                     if (reservationNum == null || reservationNum.trim().isEmpty()) {
-                        result.put("message", "❌ 예매 번호가 유효하지 않습니다.");
+                        result.put("message", "예매 번호가 유효하지 않습니다.");
                         break;
                     }
 
@@ -96,11 +97,11 @@ public class MovieCancelService {
                             .findFirst();
 
                     if (target.isEmpty()) {
-                        result.put("message", "❌ 해당 예매는 존재하지 않거나 취소할 수 없습니다.");
+                        result.put("message", "해당 예매는 존재하지 않거나 취소할 수 없습니다.");
                     } else {
                         ReservationDTO r = target.get();
                         result.put("message", String.format(
-                                "🔎 선택하신 예매 정보:\n🎟️ %s / %s / %s / 좌석 %s\n\n✅ 이 예매를 취소하시겠습니까?",
+                                "선택하신 예매 정보:\n%s / %s / %s / 좌석 %s\n\n이 예매를 취소하시겠습니까?",
                                 r.getScheduleDTO().getMovieInfo().getMovieTitle(),
                                 r.getScheduleDTO().getScreeningDate(),
                                 r.getScheduleDTO().getTheaterInfo().getCinemaFranchisedto().getBranchName(),
@@ -109,8 +110,8 @@ public class MovieCancelService {
                     break;
                 }
 
-                // 3️⃣ 실제 예매 취소 처리 + 관리자 서버 취소트랜잭션 INSERT (그룹 단위)
-                case "movie_cancel": // ✅ Admin 서버 요청 (Gateway)
+                // 실제 예매 취소 상태 업데이트 및 그룹 단위 취소 트랜잭션을 관리자 서버에 전달한다
+                case "movie_cancel": // Admin 서버 요청 (Gateway)
                 case "movie_cancel_step3": {
                     ReservationDTO reservation = null;
 
@@ -129,16 +130,16 @@ public class MovieCancelService {
                     }
 
                     if (reservation == null) {
-                        result.put("message", "❌ 해당 예매 정보를 찾을 수 없습니다.");
+                        result.put("message", "해당 예매 정보를 찾을 수 없습니다.");
                         break;
                     }
 
                     String phoneNumber = reservation.getPhoneNumber();
                     int scheduleNum = reservation.getScheduleNum();
                     String bookingGroupId = reservation.getBookingGroupId();
-                    Long originalTransactionNum = reservation.getTransactionNum(); // ✅ 원본 트랜잭션 번호
+                    Long originalTransactionNum = reservation.getTransactionNum(); // 원본 트랜잭션 번호
 
-                    // 2️⃣ 같은 그룹의 모든 예약 찾기
+                    // 같은 그룹의 모든 예약 찾기
                     List<ReservationDTO> groupReservations = new ArrayList<>();
                     if (bookingGroupId != null && !bookingGroupId.isEmpty()) {
                         // 그룹 예약: 같은 booking_group_id의 모든 예약 찾기
@@ -150,13 +151,13 @@ public class MovieCancelService {
                         groupReservations.add(reservation);
                     }
 
-                    // ⭐ schedule → theater → branch → merchantCode 조회
+                    // schedule → theater → branch → merchantCode 조회
                     String merchantCode = scheduleMapper.findMerchantCodeByScheduleNum(scheduleNum);
 
                     int totalAmount = 0;
                     int successCount = 0;
 
-                    // 3️⃣ 그룹의 모든 예약 취소
+                    // 그룹의 모든 예약 취소
                     for (ReservationDTO r : groupReservations) {
                         boolean success = reservationCRUDService.updateReservationState(r.getReservationNum());
                         if (success) {
@@ -166,17 +167,17 @@ public class MovieCancelService {
                     }
 
                     if (successCount == 0) {
-                        result.put("message", "⚠️ 예매 취소 상태 업데이트 실패");
+                        result.put("message", "예매 취소 상태 업데이트 실패");
                         break;
                     }
 
-                    // 4️⃣ 관리자 서버로 취소 트랜잭션 INSERT
+                    // 관리자 서버로 취소 트랜잭션 INSERT
                     try {
                         RestTemplate restTemplate = new RestTemplate();
 
                         String url = "http://localhost:8000/api/transactions/add";
 
-                        // ⭐ 스케줄 정보 조회 (취소 내역 날짜용)
+                        // 스케줄 정보 조회 (취소 내역 날짜용)
                         com.novacinema.schedule.model.dto.ScheduleDTO schedule = scheduleMapper
                                 .selectScheduleByNum(scheduleNum);
                         java.time.LocalDateTime startDate = null;
@@ -195,11 +196,11 @@ public class MovieCancelService {
                         Map<String, Object> payload = new HashMap<>();
                         payload.put("phoneNum", phoneNumber);
                         payload.put("merchantCode", merchantCode);
-                        payload.put("amountUsed", totalAmount); // ✅ 전체 금액
+                        payload.put("amountUsed", totalAmount); // 전체 금액
                         payload.put("status", "R"); // 취소 코드
-                        payload.put("originalTransactionNum", originalTransactionNum); // ✅ 원본 트랜잭션 번호 추가
+                        payload.put("originalTransactionNum", originalTransactionNum); // 원본 트랜잭션 번호 추가
 
-                        // ✅ LocalDateTime -> String 변환 (Format 맞추기: yyyy-MM-dd HH:mm:ss)
+                        // LocalDateTime -> String 변환 (Format 맞추기: yyyy-MM-dd HH:mm:ss)
                         java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter
                                 .ofPattern("yyyy-MM-dd HH:mm:ss");
                         payload.put("startDate", startDate != null ? startDate.format(formatter) : null);
@@ -207,12 +208,12 @@ public class MovieCancelService {
 
                         restTemplate.postForObject(url, payload, String.class);
 
-                        result.put("message", String.format("🟢 총 %d개의 예매가 취소되었습니다! (환불액: %s원)",
+                        result.put("message", String.format("총 %d개의 예매가 취소되었습니다! (환불액: %s원)",
                                 successCount, String.format("%,d", totalAmount)));
 
                     } catch (Exception e) {
                         result.put("message",
-                                String.format("⚠️ 예매는 취소되었지만 관리자 서버 기록 실패 (취소된 좌석: %d개): %s",
+                                String.format("예매는 취소되었지만 관리자 서버 기록 실패 (취소된 좌석: %d개): %s",
                                         successCount, e.getMessage()));
                     }
 
